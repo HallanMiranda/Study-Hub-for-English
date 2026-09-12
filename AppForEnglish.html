@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#12151c">
+<title>English Study Hub</title>
+<style>
+  /* ============ TOKENS ============ */
+  :root {
+    --bg: #12151c;
+    --surface: #1b1f29;
+    --surface-2: #232837;
+    --line: #2f3545;
+    --ink: #e8e6df;
+    --ink-soft: #9aa0ad;
+    --amber: #e3b04b;
+    --amber-ink: #1a1400;
+    --teal: #5fbfa8;
+    --rose: #e07a7a;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --r-sm: 6px;
+    --r-lg: 18px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  body { min-height: 100dvh; display: flex; flex-direction: column; }
+  button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+  button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+  /* ============ HEADER / TABS ============ */
+  header { padding: 20px 20px 0; max-width: 760px; width: 100%; margin: 0 auto; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; margin: 0 0 14px; letter-spacing: -0.01em; }
+  h1 span { color: var(--amber); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+  .tab { flex: 1; padding: 12px 8px; color: var(--ink-soft); border-bottom: 2px solid transparent; margin-bottom: -1px; font-size: 0.95rem; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--amber); }
+
+  main { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 20px; }
+  section[hidden] { display: none; }
+
+  /* ============ CONTROLS ============ */
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
+  .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+  .seg button { padding: 7px 14px; border-radius: 999px; color: var(--ink-soft); font-size: 0.9rem; }
+  .seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); }
+  .btn { padding: 11px 18px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--line); font-size: 0.95rem; }
+  .btn:hover { border-color: var(--ink-soft); }
+  .btn.primary { background: var(--amber); color: var(--amber-ink); border-color: var(--amber); font-weight: 600; }
+  .btn.ghost { background: transparent; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .speed { display: flex; align-items: center; gap: 10px; color: var(--ink-soft); font-size: 0.9rem; }
+  .speed input { accent-color: var(--amber); width: 120px; }
+  .hint { color: var(--ink-soft); font-size: 0.85rem; margin: 6px 0 0; }
+
+  /* ============ READER ============ */
+  textarea {
+    width: 100%; min-height: 240px; resize: vertical;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-lg);
+    padding: 20px; font-family: var(--serif); font-size: 1.15rem; line-height: 1.65;
+  }
+  textarea::placeholder { color: var(--ink-soft); }
+  .reading { font-family: var(--serif); font-size: 1.15rem; line-height: 1.65; padding: 20px; background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--line); }
+  .reading mark { background: rgba(227,176,75,0.28); color: var(--ink); border-radius: 3px; padding: 0 2px; }
+
+  /* ============ FLASHCARD ============ */
+  .stats { display: flex; gap: 14px; flex-wrap: wrap; color: var(--ink-soft); font-size: 0.85rem; margin-bottom: 14px; }
+  .stats b { color: var(--ink); font-weight: 600; }
+  .stats .k { color: var(--teal); } .stats .a { color: var(--amber); } .stats .u { color: var(--rose); }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px 24px; }
+  .level { display: inline-block; font-size: 0.75rem; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); }
+  .word { font-family: var(--serif); font-size: clamp(2.4rem, 9vw, 3.4rem); margin: 14px 0 6px; line-height: 1.1; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .play { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line); display: inline-grid; place-items: center; flex: none; }
+  .play:hover { border-color: var(--amber); color: var(--amber); }
+  .play svg { width: 16px; height: 16px; fill: currentColor; }
+  .sentence { font-family: var(--serif); font-size: 1.2rem; line-height: 1.55; margin: 18px 0 0; display: flex; gap: 12px; align-items: flex-start; }
+  .sentence .play { width: 34px; height: 34px; margin-top: 2px; }
+  .sentence .play svg { width: 13px; height: 13px; }
+  .meaning { margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--line); }
+  .meaning .t-word { font-size: 1.35rem; color: var(--amber); margin: 0 0 8px; }
+  .meaning .t-sent { color: var(--ink-soft); font-size: 1.05rem; line-height: 1.5; margin: 0; }
+  .actions { display: flex; gap: 10px; margin-top: 22px; }
+  .actions .btn { flex: 1; padding: 13px 6px; }
+  .actions .u { border-color: var(--rose); color: var(--rose); }
+  .actions .a { border-color: var(--amber); color: var(--amber); }
+  .actions .k { border-color: var(--teal); color: var(--teal); }
+  .progress { height: 3px; background: var(--line); border-radius: 2px; margin-top: 18px; overflow: hidden; }
+  .progress i { display: block; height: 100%; background: var(--amber); width: 0; transition: width .3s; }
+  .tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .tools .btn { font-size: 0.85rem; padding: 8px 12px; }
+  .sr-only { position: absolute; left: -9999px; }
+
+  /* ============ CONSULTA ============ */
+  .search { display: flex; gap: 8px; }
+  .search input { flex: 1; min-width: 0; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; font-size: 1.05rem; }
+  .lookup { margin-top: 18px; display: grid; gap: 14px; }
+  .block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px 20px; }
+  .block h3 { margin: 0 0 10px; font-family: var(--serif); font-weight: 400; font-size: 1.05rem; color: var(--amber); }
+  .block p, .block li { margin: 0 0 6px; line-height: 1.5; }
+  .block ul { margin: 0; padding-left: 18px; }
+  .block .pt { color: var(--ink-soft); font-size: 0.95rem; }
+  .headword { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .headword b { font-family: var(--serif); font-size: 2rem; font-weight: 400; }
+  .headword .ipa { color: var(--ink-soft); }
+  .flag { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); font-size: 0.85rem; }
+  .flag:hover { border-color: var(--amber); }
+  .pos { display: inline-block; font-size: 0.75rem; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; margin: 8px 0 4px; }
+  .regional { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .regional div { background: var(--surface-2); border-radius: var(--r-sm); padding: 12px; }
+  .regional strong { display: block; font-size: 1.1rem; margin-bottom: 4px; }
+  @media (max-width: 480px) { .regional { grid-template-columns: 1fr; } }
+  .warn { color: var(--rose); }
+  .ai-setup { display: none; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .ai-setup.open { display: flex; }
+  .ai-setup select, .ai-setup input { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px 10px; font-size: 0.9rem; }
+  .ai-setup input { flex: 1; min-width: 180px; }
+  details summary { cursor: pointer; color: var(--ink-soft); font-size: 0.9rem; }
+
+  footer { text-align: center; color: var(--ink-soft); font-size: 0.75rem; padding: 18px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>English <span>Study Hub</span></h1>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="reader">Leitor</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="cards">Flashcards</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="lookup">Consultar</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ========== MÓDULO 1: LEITOR ========== -->
+  <section id="reader" role="tabpanel">
+    <textarea id="text" placeholder="Cole aqui um trecho do livro que você está lendo em inglês…" spellcheck="false"></textarea>
+    <div id="readingView" class="reading" hidden></div>
+
+    <div class="row">
+      <div class="seg" id="accent" role="group" aria-label="Sotaque">
+        <button aria-pressed="true" data-lang="en-US">🇺🇸 Americano</button>
+        <button aria-pressed="false" data-lang="en-GB">🇬🇧 Britânico</button>
+      </div>
+      <label class="speed">Velocidade <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="0.85"> <span id="rateVal">0.85×</span></label>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="listen">▶ Ouvir</button>
+      <button class="btn" id="stop" disabled>■ Parar</button>
+      <button class="btn ghost" id="clear">Limpar</button>
+    </div>
+    <p class="hint" id="voiceHint"></p>
+  </section>
+
+  <!-- ========== MÓDULO 2: FLASHCARDS ========== -->
+  <section id="cards" role="tabpanel" hidden>
+    <div class="stats">
+      <span>Revisadas <b id="sTotal">0</b></span>
+      <span class="k">Já sabia <b id="sKnown">0</b></span>
+      <span class="a">Quase <b id="sAlmost">0</b></span>
+      <span class="u">Não sabia <b id="sUnknown">0</b></span>
+      <span>Dominadas <b id="sMastered">0</b>/<span id="sDeck">0</span></span>
+    </div>
+
+    <div class="card" id="card">
+      <span class="level" id="cLevel">A1</span>
+      <div class="word">
+        <span id="cWord">—</span>
+        <button class="play" id="cPlayWord" aria-label="Ouvir palavra">
+          <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05A4.47 4.47 0 0 0 16.5 12z"/></svg>
+        </button>
+      </div>
+      <div class="sentence">
+        <button class="play" id="cPlaySent" aria-label="Ouvir frase">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <span id="cSent">—</span>
+      </div>
+
+      <div class="meaning" id="meaning" hidden>
+        <p class="t-word" id="cTWord"></p>
+        <p class="t-sent" id="cTSent"></p>
+      </div>
+
+      <div class="actions" id="revealRow">
+        <button class="btn primary" id="reveal">Ver significado</button>
+      </div>
+      <div class="actions" id="gradeRow" hidden>
+        <button class="btn u" data-grade="unknown">Não sabia</button>
+        <button class="btn a" data-grade="almost">Quase</button>
+        <button class="btn k" data-grade="known">Já sabia</button>
+      </div>
+      <div class="progress"><i id="bar"></i></div>
+    </div>
+
+    <div class="tools">
+      <button class="btn" id="shuffle">Embaralhar</button>
+      <button class="btn" id="importBtn">Importar deck (JSON)</button>
+      <input type="file" id="importFile" accept="application/json" class="sr-only">
+      <button class="btn" id="exportStats">Exportar progresso</button>
+      <button class="btn ghost" id="resetStats">Zerar progresso</button>
+    </div>
+    <p class="hint">Formato do JSON: <code>[{"level":"A1","word":"…","sentence":"…","t_word":"…","t_sentence":"…"}]</code>. O sotaque e a velocidade escolhidos na aba Leitor valem aqui também.</p>
+  </section>
+  <!-- ========== MÓDULO 3: CONSULTAR PALAVRA ========== -->
+  <section id="lookup" role="tabpanel" hidden>
+    <div class="search">
+      <input id="q" type="text" placeholder="Em inglês ou português… ex.: public toilet / banheiro público" autocomplete="off" autocapitalize="off">
+      <button class="btn primary" id="lookupBtn">Buscar</button>
+    </div>
+    <p class="hint">Pode digitar em inglês ou em português: o app detecta o idioma, mostra o termo em inglês, a pronúncia 🇺🇸/🇬🇧, o significado e como usar em frases. Sem chave, usa dicionário e tradução públicos + tabela de diferenças embutida; com a IA opcional, cobre qualquer palavra.</p>
+
+    <details>
+      <summary>IA opcional (sua própria chave, gratuita no Gemini)</summary>
+      <div class="ai-setup open">
+        <select id="aiProvider">
+          <option value="gemini">Google Gemini (tem plano gratuito)</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+        </select>
+        <input id="aiKey" type="password" placeholder="Cole sua API key (fica só no seu navegador)">
+        <button class="btn" id="aiSave">Salvar</button>
+      </div>
+    </details>
+
+    <div id="lookupOut" class="lookup"></div>
+  </section>
+</main>
+
+<footer>Roda 100% no navegador. Nada é enviado a servidores.</footer>
+
+<script>
+/* ==================================================================
+   DECK BASE (A1/A2). Adicione mais itens aqui ou importe um JSON.
+   Campos: level, word, sentence, t_word, t_sentence
+   ================================================================== */
+const BASE_DECK = [
+  ["A1","the","The book is on the table.","o, a, os, as","O livro está sobre a mesa."],
+  ["A1","be","I want to be a doctor.","ser, estar","Eu quero ser médico."],
+  ["A1","and","She likes tea and coffee.","e","Ela gosta de chá e café."],
+  ["A1","of","This is a photo of my family.","de","Esta é uma foto da minha família."],
+  ["A1","to","We are going to the park.","para, a","Nós estamos indo para o parque."],
+  ["A1","in","My keys are in my bag.","em, dentro de","Minhas chaves estão na minha bolsa."],
+  ["A1","have","I have two brothers.","ter","Eu tenho dois irmãos."],
+  ["A1","it","It is very cold today.","ele/ela (coisa)","Está muito frio hoje."],
+  ["A1","you","You are my best friend.","você, vocês","Você é meu melhor amigo."],
+  ["A1","that","I know that man.","aquele, aquilo, que","Eu conheço aquele homem."],
+  ["A1","he","He works at a bank.","ele","Ele trabalha em um banco."],
+  ["A1","she","She speaks three languages.","ela","Ela fala três idiomas."],
+  ["A1","we","We live in a small town.","nós","Nós moramos em uma cidade pequena."],
+  ["A1","they","They play football on Sundays.","eles, elas","Eles jogam futebol aos domingos."],
+  ["A1","for","This gift is for you.","para, por","Este presente é para você."],
+  ["A1","not","I do not like fish.","não","Eu não gosto de peixe."],
+  ["A1","on","The cat is on the sofa.","sobre, em cima de","O gato está no sofá."],
+  ["A1","with","I go to school with my sister.","com","Eu vou à escola com minha irmã."],
+  ["A1","do","What do you do on weekends?","fazer","O que você faz nos fins de semana?"],
+  ["A1","say","What did she say?","dizer","O que ela disse?"],
+  ["A1","this","This is my house.","este, esta, isto","Esta é a minha casa."],
+  ["A1","at","Meet me at the station.","em, no, na","Me encontre na estação."],
+  ["A1","but","I like the color, but it is expensive.","mas","Eu gosto da cor, mas é caro."],
+  ["A1","from","Where are you from?","de (origem)","De onde você é?"],
+  ["A1","by","The book was written by a young author.","por, perto de","O livro foi escrito por um autor jovem."],
+  ["A1","go","Let's go home.","ir","Vamos para casa."],
+  ["A1","get","Can you get me some water?","pegar, conseguir, obter","Você pode me pegar um pouco de água?"],
+  ["A1","make","My mother makes great cakes.","fazer, fabricar","Minha mãe faz bolos ótimos."],
+  ["A1","know","I know the answer.","saber, conhecer","Eu sei a resposta."],
+  ["A1","think","I think it will rain.","pensar, achar","Eu acho que vai chover."],
+  ["A1","see","I can see the sea from my window.","ver","Eu consigo ver o mar da minha janela."],
+  ["A1","come","Come here, please.","vir","Venha aqui, por favor."],
+  ["A1","want","I want a new phone.","querer","Eu quero um celular novo."],
+  ["A1","look","Look at the sky!","olhar","Olhe para o céu!"],
+  ["A1","use","You can use my pen.","usar","Você pode usar minha caneta."],
+  ["A1","find","I can't find my glasses.","encontrar, achar","Não consigo encontrar meus óculos."],
+  ["A1","give","Give me a minute.","dar","Me dê um minuto."],
+  ["A1","tell","Tell me your name.","contar, dizer","Me diga seu nome."],
+  ["A1","work","I work from home.","trabalhar; trabalho","Eu trabalho de casa."],
+  ["A1","call","Call me tomorrow.","ligar, chamar","Me ligue amanhã."],
+  ["A1","try","Try this soup.","tentar, experimentar","Experimente esta sopa."],
+  ["A1","ask","Can I ask you a question?","perguntar, pedir","Posso te fazer uma pergunta?"],
+  ["A1","need","I need some help.","precisar","Eu preciso de ajuda."],
+  ["A1","feel","I feel happy today.","sentir","Eu me sinto feliz hoje."],
+  ["A1","leave","The train leaves at nine.","sair, partir, deixar","O trem parte às nove."],
+  ["A1","put","Put your coat on the chair.","colocar, pôr","Coloque seu casaco na cadeira."],
+  ["A1","mean","What does this word mean?","significar","O que esta palavra significa?"],
+  ["A1","keep","Keep the change.","manter, guardar, ficar com","Fique com o troco."],
+  ["A1","let","Let me help you.","deixar, permitir","Deixe-me ajudá-lo."],
+  ["A1","begin","The class begins at eight.","começar","A aula começa às oito."],
+  ["A1","help","Can you help me?","ajudar; ajuda","Você pode me ajudar?"],
+  ["A1","talk","We talked for hours.","conversar, falar","Nós conversamos por horas."],
+  ["A1","turn","Turn left at the corner.","virar, girar","Vire à esquerda na esquina."],
+  ["A1","start","The movie starts at seven.","começar","O filme começa às sete."],
+  ["A1","show","Show me your photos.","mostrar","Me mostre suas fotos."],
+  ["A1","hear","I can hear music.","ouvir, escutar","Eu consigo ouvir música."],
+  ["A1","play","The kids are playing outside.","brincar, jogar, tocar","As crianças estão brincando lá fora."],
+  ["A1","run","I run every morning.","correr","Eu corro toda manhã."],
+  ["A1","move","We moved to a new house.","mover, mudar-se","Nós nos mudamos para uma casa nova."],
+  ["A1","live","Where do you live?","morar, viver","Onde você mora?"],
+  ["A1","believe","I believe you.","acreditar","Eu acredito em você."],
+  ["A1","bring","Bring your umbrella.","trazer","Traga seu guarda-chuva."],
+  ["A1","happen","What happened?","acontecer","O que aconteceu?"],
+  ["A1","write","She writes emails every day.","escrever","Ela escreve e-mails todos os dias."],
+  ["A1","sit","Please sit down.","sentar","Por favor, sente-se."],
+  ["A1","stand","Stand up, please.","ficar de pé, levantar-se","Levante-se, por favor."],
+  ["A1","lose","I always lose my keys.","perder","Eu sempre perco minhas chaves."],
+  ["A1","pay","I will pay for dinner.","pagar","Eu vou pagar o jantar."],
+  ["A1","meet","Nice to meet you.","conhecer, encontrar","Prazer em conhecê-lo."],
+  ["A1","learn","I am learning English.","aprender","Eu estou aprendendo inglês."],
+  ["A1","change","I need to change my clothes.","mudar, trocar; troco","Eu preciso trocar de roupa."],
+  ["A1","lead","This road leads to the beach.","levar a, liderar","Esta estrada leva à praia."],
+  ["A1","understand","I don't understand.","entender","Eu não entendo."],
+  ["A1","watch","We watch TV at night.","assistir, observar","Nós assistimos TV à noite."],
+  ["A1","follow","Follow me.","seguir","Siga-me."],
+  ["A1","stop","Stop the car!","parar","Pare o carro!"],
+  ["A1","speak","Do you speak English?","falar","Você fala inglês?"],
+  ["A1","read","I read a book every week.","ler","Eu leio um livro toda semana."],
+  ["A1","spend","I spend too much money.","gastar, passar (tempo)","Eu gasto dinheiro demais."],
+  ["A1","open","Open the window.","abrir; aberto","Abra a janela."],
+  ["A1","walk","Let's walk to the park.","caminhar, andar","Vamos caminhar até o parque."],
+  ["A1","win","Our team won the game.","vencer, ganhar","Nosso time venceu o jogo."],
+  ["A1","buy","I bought a new car.","comprar","Eu comprei um carro novo."],
+  ["A1","wait","Wait for me.","esperar","Espere por mim."],
+  ["A1","send","Send me a message.","enviar, mandar","Me envie uma mensagem."],
+  ["A1","stay","Stay here.","ficar, permanecer","Fique aqui."],
+  ["A1","fall","Leaves fall in autumn.","cair; outono (US)","As folhas caem no outono."],
+  ["A1","cut","Cut the bread, please.","cortar","Corte o pão, por favor."],
+  ["A1","eat","What do you want to eat?","comer","O que você quer comer?"],
+  ["A1","drink","Drink some water.","beber; bebida","Beba um pouco de água."],
+  ["A1","sleep","I sleep eight hours a night.","dormir","Eu durmo oito horas por noite."],
+  ["A1","time","What time is it?","tempo, hora, vez","Que horas são?"],
+  ["A1","year","I was born in the year 1990.","ano","Eu nasci no ano de 1990."],
+  ["A1","people","There are many people here.","pessoas","Há muitas pessoas aqui."],
+  ["A1","way","Is this the way to the museum?","caminho, jeito, maneira","Este é o caminho para o museu?"],
+  ["A1","day","Have a nice day!","dia","Tenha um bom dia!"],
+  ["A1","man","That man is my teacher.","homem","Aquele homem é meu professor."],
+  ["A1","woman","The woman in red is my aunt.","mulher","A mulher de vermelho é minha tia."],
+  ["A1","child","Every child needs love.","criança","Toda criança precisa de amor."],
+  ["A1","world","I want to travel the world.","mundo","Eu quero viajar o mundo."],
+  ["A1","life","Life is beautiful.","vida","A vida é bela."],
+  ["A1","hand","Raise your hand.","mão","Levante a mão."],
+  ["A1","place","This is a quiet place.","lugar","Este é um lugar tranquilo."],
+  ["A1","week","See you next week.","semana","Vejo você semana que vem."],
+  ["A1","house","We have a big house.","casa","Nós temos uma casa grande."],
+  ["A1","family","My family is very important to me.","família","Minha família é muito importante para mim."],
+  ["A1","friend","She is my best friend.","amigo, amiga","Ela é minha melhor amiga."],
+  ["A1","food","Italian food is delicious.","comida","A comida italiana é deliciosa."],
+  ["A1","water","Can I have a glass of water?","água","Posso tomar um copo de água?"],
+  ["A1","money","I don't have much money.","dinheiro","Eu não tenho muito dinheiro."],
+  ["A1","school","My school is near my house.","escola","Minha escola fica perto da minha casa."],
+  ["A1","job","I love my job.","emprego, trabalho","Eu amo meu trabalho."],
+  ["A1","book","This book is very interesting.","livro","Este livro é muito interessante."],
+  ["A1","car","My car is old but it works.","carro","Meu carro é velho, mas funciona."],
+  ["A1","city","New York is a big city.","cidade","Nova York é uma cidade grande."],
+  ["A1","morning","I wake up early in the morning.","manhã","Eu acordo cedo de manhã."],
+  ["A1","night","Good night!","noite","Boa noite!"],
+  ["A1","good","This is a good idea.","bom, boa","Esta é uma boa ideia."],
+  ["A1","new","I need new shoes.","novo, nova","Eu preciso de sapatos novos."],
+  ["A1","big","Elephants are big animals.","grande","Elefantes são animais grandes."],
+  ["A1","small","I live in a small apartment.","pequeno","Eu moro em um apartamento pequeno."],
+  ["A1","old","My grandfather is very old.","velho, idoso, antigo","Meu avô é muito idoso."],
+  ["A1","young","She is too young to drive.","jovem","Ela é jovem demais para dirigir."],
+  ["A1","happy","I am happy to see you.","feliz","Estou feliz em ver você."],
+  ["A1","sad","Why are you sad?","triste","Por que você está triste?"],
+  ["A1","hot","The coffee is too hot.","quente","O café está quente demais."],
+  ["A1","cold","It's cold outside.","frio","Está frio lá fora."],
+  ["A1","easy","This exercise is easy.","fácil","Este exercício é fácil."],
+  ["A1","hard","Learning a language is hard work.","difícil, duro","Aprender um idioma é trabalho duro."],
+  ["A1","early","I arrived early.","cedo","Eu cheguei cedo."],
+  ["A1","late","Sorry, I'm late.","atrasado, tarde","Desculpe, estou atrasado."],
+  ["A1","always","She always smiles.","sempre","Ela sempre sorri."],
+  ["A1","never","I never eat meat.","nunca","Eu nunca como carne."],
+  ["A1","now","I am busy now.","agora","Estou ocupado agora."],
+  ["A1","here","Come here.","aqui","Venha aqui."],
+  ["A1","there","The bank is over there.","lá, ali","O banco fica ali."],
+  ["A1","today","Today is Monday.","hoje","Hoje é segunda-feira."],
+  ["A1","tomorrow","See you tomorrow.","amanhã","Vejo você amanhã."],
+  ["A2","although","Although it was raining, we went out.","embora, apesar de","Embora estivesse chovendo, nós saímos."],
+  ["A2","become","She became a famous singer.","tornar-se, virar","Ela se tornou uma cantora famosa."],
+  ["A2","remember","I remember my first day at school.","lembrar","Eu me lembro do meu primeiro dia na escola."],
+  ["A2","forget","Don't forget your keys.","esquecer","Não esqueça suas chaves."],
+  ["A2","decide","We decided to stay home.","decidir","Nós decidimos ficar em casa."],
+  ["A2","allow","Smoking is not allowed here.","permitir","Fumar não é permitido aqui."],
+  ["A2","build","They are building a new bridge.","construir","Eles estão construindo uma ponte nova."],
+  ["A2","carry","Can you carry this box?","carregar","Você pode carregar esta caixa?"],
+  ["A2","choose","Choose a color.","escolher","Escolha uma cor."],
+  ["A2","consider","Consider all the options.","considerar","Considere todas as opções."],
+  ["A2","continue","Please continue your story.","continuar","Por favor, continue sua história."],
+  ["A2","create","She created a beautiful painting.","criar","Ela criou uma pintura linda."],
+  ["A2","describe","Describe your best friend.","descrever","Descreva seu melhor amigo."],
+  ["A2","expect","I didn't expect to see you here.","esperar (expectativa)","Eu não esperava ver você aqui."],
+  ["A2","explain","Can you explain this rule?","explicar","Você pode explicar esta regra?"],
+  ["A2","improve","My English is improving.","melhorar","Meu inglês está melhorando."],
+  ["A2","include","The price includes breakfast.","incluir","O preço inclui o café da manhã."],
+  ["A2","offer","They offered me a job.","oferecer; oferta","Eles me ofereceram um emprego."],
+  ["A2","prefer","I prefer tea to coffee.","preferir","Eu prefiro chá a café."],
+  ["A2","prepare","I am preparing dinner.","preparar","Eu estou preparando o jantar."],
+  ["A2","protect","Sunscreen protects your skin.","proteger","O protetor solar protege sua pele."],
+  ["A2","receive","I received your email.","receber","Eu recebi seu e-mail."],
+  ["A2","reduce","We need to reduce costs.","reduzir","Nós precisamos reduzir custos."],
+  ["A2","return","I will return the book tomorrow.","devolver, voltar","Eu vou devolver o livro amanhã."],
+  ["A2","suggest","I suggest we leave early.","sugerir","Eu sugiro que a gente saia cedo."],
+  ["A2","support","My family supports my decision.","apoiar; apoio","Minha família apoia minha decisão."],
+  ["A2","achieve","She achieved her goal.","alcançar, conquistar","Ela alcançou seu objetivo."],
+  ["A2","avoid","Avoid sugar if you can.","evitar","Evite açúcar se puder."],
+  ["A2","compare","Compare the two prices.","comparar","Compare os dois preços."],
+  ["A2","develop","Children develop quickly.","desenvolver","As crianças se desenvolvem rapidamente."],
+  ["A2","experience","It was a great experience.","experiência; vivenciar","Foi uma experiência ótima."],
+  ["A2","opportunity","This is a great opportunity.","oportunidade","Esta é uma grande oportunidade."],
+  ["A2","environment","We must protect the environment.","meio ambiente, ambiente","Nós devemos proteger o meio ambiente."],
+  ["A2","government","The government announced new rules.","governo","O governo anunciou novas regras."],
+  ["A2","although","Although he is rich, he is not happy.","embora","Embora ele seja rico, não é feliz."],
+  ["A2","however","It was expensive; however, I bought it.","no entanto, porém","Era caro; no entanto, eu comprei."],
+  ["A2","probably","It will probably rain later.","provavelmente","Provavelmente vai chover mais tarde."],
+  ["A2","usually","I usually wake up at six.","geralmente, normalmente","Eu geralmente acordo às seis."],
+  ["A2","already","I have already eaten.","já","Eu já comi."],
+  ["A2","still","She is still sleeping.","ainda","Ela ainda está dormindo."],
+  ["A2","enough","I don't have enough time.","suficiente, o bastante","Eu não tenho tempo suficiente."],
+  ["A2","between","The shop is between the bank and the café.","entre","A loja fica entre o banco e o café."],
+  ["A2","during","I read during the flight.","durante","Eu li durante o voo."],
+  ["A2","until","Wait until I come back.","até","Espere até eu voltar."],
+  ["A2","without","I can't live without music.","sem","Eu não consigo viver sem música."],
+  ["A2","afraid","I am afraid of spiders.","com medo","Eu tenho medo de aranhas."],
+  ["A2","angry","Why are you angry with me?","bravo, com raiva","Por que você está bravo comigo?"],
+  ["A2","careful","Be careful with that knife.","cuidadoso","Tenha cuidado com essa faca."],
+  ["A2","dangerous","This road is dangerous at night.","perigoso","Esta estrada é perigosa à noite."],
+  ["A2","famous","He is a famous actor.","famoso","Ele é um ator famoso."],
+  ["A2","healthy","Vegetables are healthy.","saudável","Vegetais são saudáveis."],
+  ["A2","interesting","This is an interesting story.","interessante","Esta é uma história interessante."],
+  ["A2","necessary","It is necessary to book in advance.","necessário","É necessário reservar com antecedência."],
+  ["A2","possible","Is it possible to change the date?","possível","É possível mudar a data?"],
+  ["A2","surprised","I was surprised by the news.","surpreso","Eu fiquei surpreso com a notícia."],
+  ["A2","tired","I am tired after work.","cansado","Estou cansado depois do trabalho."],
+  ["A2","weather","The weather is lovely today.","tempo (clima)","O tempo está lindo hoje."],
+  ["A2","holiday","We went on holiday to Spain.","feriado, férias (UK)","Nós fomos de férias para a Espanha."],
+  ["A2","journey","It was a long journey.","viagem, jornada","Foi uma viagem longa."],
+  ["A2","neighbour","My neighbour is very friendly.","vizinho (UK)","Meu vizinho é muito simpático."],
+  ["A2","advice","Can you give me some advice?","conselho","Você pode me dar um conselho?"],
+  ["A2","mistake","Everyone makes mistakes.","erro","Todo mundo comete erros."],
+  ["A2","reason","What is the reason for the delay?","razão, motivo","Qual é o motivo do atraso?"],
+  ["A2","result","The results were excellent.","resultado","Os resultados foram excelentes."],
+  ["A2","skill","Reading is an important skill.","habilidade","Leitura é uma habilidade importante."],
+];
+
+/* ============ STORAGE (com fallback em memória) ============ */
+const KEY_STATS = 'esh_stats_v1', KEY_DECK = 'esh_deck_v1', KEY_PREFS = 'esh_prefs_v1';
+const mem = {};
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : (mem[k] ?? d); } catch { return mem[k] ?? d; } },
+  set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch {} }
+};
+
+/* ============ SPEECH ============ */
+const synth = window.speechSynthesis;
+const prefs = Object.assign({ lang: 'en-US', rate: 0.85 }, store.get(KEY_PREFS, {}));
+let voices = [];
+
+function loadVoices() {
+  voices = synth ? synth.getVoices() : [];
+  const hint = document.getElementById('voiceHint');
+  if (!synth) { hint.textContent = 'Seu navegador não suporta síntese de voz.'; return; }
+  const v = pickVoice(prefs.lang);
+  hint.textContent = v ? `Voz: ${v.name}` : 'Nenhuma voz específica encontrada; usando a voz padrão do sistema.';
+}
+function pickVoice(lang) {
+  const exact = voices.filter(v => v.lang.replace('_','-').toLowerCase() === lang.toLowerCase());
+  const prefer = exact.find(v => /google|natural|premium|enhanced|siri/i.test(v.name)) || exact[0];
+  return prefer || voices.find(v => v.lang.toLowerCase().startsWith(lang.slice(0,2)));
+}
+if (synth) { synth.onvoiceschanged = loadVoices; loadVoices(); }
+
+function speak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
+  if (!synth || !text.trim()) return;
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = prefs.lang; u.rate = rate; u.pitch = 1;
+  const v = pickVoice(prefs.lang); if (v) u.voice = v;
+  if (onBoundary) u.onboundary = onBoundary;
+  u.onend = u.onerror = () => onEnd && onEnd();
+  synth.speak(u);
+}
+function stopSpeech() { if (synth) synth.cancel(); }
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === t));
+  document.querySelectorAll('[role=tabpanel]').forEach(p => p.hidden = p.id !== t.dataset.tab);
+  stopSpeech(); resetReader();
+}));
+
+/* ============ MÓDULO 1: LEITOR ============ */
+const $text = document.getElementById('text'), $view = document.getElementById('readingView');
+const $listen = document.getElementById('listen'), $stop = document.getElementById('stop');
+const $rate = document.getElementById('rate'), $rateVal = document.getElementById('rateVal');
+
+$rate.value = prefs.rate; $rateVal.textContent = prefs.rate.toFixed(2) + '×';
+$rate.addEventListener('input', () => { prefs.rate = +$rate.value; $rateVal.textContent = prefs.rate.toFixed(2) + '×'; store.set(KEY_PREFS, prefs); });
+
+document.querySelectorAll('#accent button').forEach(b => {
+  b.setAttribute('aria-pressed', b.dataset.lang === prefs.lang);
+  b.addEventListener('click', () => {
+    prefs.lang = b.dataset.lang; store.set(KEY_PREFS, prefs);
+    document.querySelectorAll('#accent button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    loadVoices();
+  });
+});
+
+function resetReader() { $view.hidden = true; $text.hidden = false; $listen.disabled = false; $stop.disabled = true; }
+
+$listen.addEventListener('click', () => {
+  const txt = $text.value.trim(); if (!txt) { $text.focus(); return; }
+  // Destaque palavra a palavra (quando o navegador dispara onboundary)
+  const words = txt.split(/(\s+)/);
+  $view.innerHTML = words.map(w => /\s+/.test(w) ? w : `<span>${escapeHtml(w)}</span>`).join('');
+  const spans = [...$view.querySelectorAll('span')];
+  const offsets = []; let pos = 0;
+  words.forEach(w => { if (!/\s+/.test(w)) offsets.push(pos); pos += w.length; });
+  $view.hidden = false; $text.hidden = true; $listen.disabled = true; $stop.disabled = false;
+  let current = -1;
+  speak(txt, {
+    onBoundary: e => {
+      if (e.name !== 'word') return;
+      let i = offsets.findIndex((o, k) => e.charIndex >= o && (k === offsets.length - 1 || e.charIndex < offsets[k+1]));
+      if (i < 0 || i === current) return;
+      if (current >= 0) spans[current].outerHTML = `<span>${spans[current].textContent}</span>`;
+      spans.length = 0; spans.push(...$view.querySelectorAll('span, mark'));
+      spans[i].outerHTML = `<mark>${spans[i].textContent}</mark>`;
+      spans.length = 0; spans.push(...$view.querySelectorAll('span, mark'));
+      current = i;
+    },
+    onEnd: resetReader
+  });
+});
+$stop.addEventListener('click', () => { stopSpeech(); resetReader(); });
+document.getElementById('clear').addEventListener('click', () => { stopSpeech(); $text.value = ''; resetReader(); $text.focus(); });
+function escapeHtml(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ============ MÓDULO 2: FLASHCARDS ============ */
+const KEY_CUSTOM = 'esh_custom_v1', KEY_AI = 'esh_ai_v1';
+let customWords = store.get(KEY_CUSTOM, []);
+let deck = normalizeDeck(store.get(KEY_DECK, null) || BASE_DECK).concat(customWords);
+let stats = store.get(KEY_STATS, { total: 0, known: 0, almost: 0, unknown: 0, words: {} });
+let queue = [], idx = 0, card = null;
+
+function normalizeDeck(d) {
+  return d.map(x => Array.isArray(x)
+    ? { level: x[0], word: x[1], sentence: x[2], t_word: x[3], t_sentence: x[4] }
+    : x).filter(x => x && x.word && x.sentence);
+}
+// Repetição espaçada simples: "não sabia" reaparece cedo, "já sabia" (x2) vira dominada e sai do ciclo.
+function buildQueue() {
+  const score = w => (stats.words[w] || { score: 0 }).score;
+  const active = deck.filter(c => score(c.word) < 2);
+  const pool = active.length ? active : deck;
+  queue = [...pool].sort((a, b) => score(a.word) - score(b.word) || Math.random() - 0.5);
+  idx = 0;
+}
+function renderStats() {
+  const mastered = deck.filter(c => (stats.words[c.word] || {}).score >= 2).length;
+  sTotal.textContent = stats.total; sKnown.textContent = stats.known;
+  sAlmost.textContent = stats.almost; sUnknown.textContent = stats.unknown;
+  sMastered.textContent = mastered; sDeck.textContent = deck.length;
+  bar.style.width = deck.length ? (mastered / deck.length * 100) + '%' : '0';
+}
+function showCard() {
+  if (!queue.length) buildQueue();
+  if (idx >= queue.length) buildQueue();
+  card = queue[idx];
+  cLevel.textContent = card.level || '—';
+  cWord.textContent = card.word;
+  cSent.textContent = card.sentence;
+  cTWord.textContent = card.t_word || '';
+  cTSent.textContent = card.t_sentence || '';
+  meaning.hidden = true; gradeRow.hidden = true; revealRow.hidden = false;
+  renderStats();
+}
+document.getElementById('reveal').addEventListener('click', () => {
+  meaning.hidden = false; revealRow.hidden = true; gradeRow.hidden = false;
+});
+document.querySelectorAll('[data-grade]').forEach(b => b.addEventListener('click', () => {
+  const g = b.dataset.grade, w = stats.words[card.word] || { score: 0, seen: 0 };
+  w.seen++;
+  w.score = g === 'known' ? Math.min(w.score + 1, 2) : g === 'almost' ? Math.max(w.score, 0) : -1;
+  stats.words[card.word] = w; stats[g]++; stats.total++;
+  store.set(KEY_STATS, stats);
+  idx++; stopSpeech(); showCard();
+}));
+document.getElementById('cPlayWord').addEventListener('click', () => speak(card.word, { rate: Math.min(prefs.rate, 0.9) }));
+document.getElementById('cPlaySent').addEventListener('click', () => speak(card.sentence));
+document.getElementById('shuffle').addEventListener('click', () => { buildQueue(); showCard(); });
+
+document.getElementById('importBtn').addEventListener('click', () => importFile.click());
+importFile.addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const data = normalizeDeck(JSON.parse(await f.text()));
+    if (!data.length) throw new Error('vazio');
+    store.set(KEY_DECK, data); deck = data.concat(customWords); buildQueue(); showCard();
+  } catch { alert('Não foi possível ler o arquivo. Verifique se é um JSON no formato indicado.'); }
+  importFile.value = '';
+});
+document.getElementById('exportStats').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(stats, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'english-study-hub-progresso.json'; a.click();
+});
+document.getElementById('resetStats').addEventListener('click', () => {
+  if (!confirm('Zerar todo o progresso dos flashcards?')) return;
+  stats = { total: 0, known: 0, almost: 0, unknown: 0, words: {} }; store.set(KEY_STATS, stats);
+  buildQueue(); showCard();
+});
+
+// Atalhos de teclado: Espaço revela, 1/2/3 avaliam
+document.addEventListener('keydown', e => {
+  if (document.getElementById('cards').hidden || e.target.tagName === 'TEXTAREA') return;
+  if (e.code === 'Space' && !revealRow.hidden) { e.preventDefault(); reveal.click(); }
+  if (!gradeRow.hidden && ['1','2','3'].includes(e.key)) gradeRow.children[+e.key - 1].click();
+});
+
+
+/* ============ MÓDULO 3: CONSULTAR PALAVRA ============ */
+// Tabela embutida de diferenças 🇺🇸 x 🇬🇧 (termo US, termo UK, português, observação)
+const REGIONAL = [
+  ["restroom / bathroom","toilet / loo / the gents / the ladies","banheiro","Nos EUA 'toilet' soa cru (é o vaso). No Reino Unido 'bathroom' é onde tem banheira; em público, pergunte por 'the toilets' ou 'the loo'."],
+  ["public restroom","public toilet / public conveniences","banheiro público","Placas no Reino Unido dizem 'Toilets' ou 'WC'; nos EUA, 'Restrooms'."],
+  ["apartment","flat","apartamento",""],
+  ["elevator","lift","elevador","'Lift' nos EUA é 'carona' (give me a lift)."],
+  ["truck","lorry","caminhão",""],
+  ["trunk","boot","porta-malas","'Boot' nos EUA é só 'bota'."],
+  ["hood","bonnet","capô",""],
+  ["gas / gasoline","petrol","gasolina","'Gas' no Reino Unido é gás de cozinha."],
+  ["gas station","petrol station","posto de gasolina",""],
+  ["sidewalk","pavement","calçada","'Pavement' nos EUA é o asfalto da rua."],
+  ["highway / freeway","motorway","rodovia",""],
+  ["parking lot","car park","estacionamento",""],
+  ["subway","underground / the tube","metrô","'Subway' em Londres é passagem subterrânea para pedestres."],
+  ["soccer","football","futebol","'Football' nos EUA é futebol americano."],
+  ["vacation","holiday","férias","'Holiday' nos EUA é feriado."],
+  ["line","queue","fila (de pessoas)",""],
+  ["cookie","biscuit","biscoito doce","'Biscuit' nos EUA é um pãozinho salgado."],
+  ["french fries","chips","batata frita (palito)",""],
+  ["chips","crisps","batata chips (pacote)","Cuidado: 'chips' muda de significado entre os dois."],
+  ["candy","sweets","doces, balas",""],
+  ["pants","trousers","calça","'Pants' no Reino Unido é cueca/calcinha!"],
+  ["underwear","pants / knickers","roupa íntima",""],
+  ["sweater","jumper","suéter, blusa de frio",""],
+  ["sneakers","trainers","tênis",""],
+  ["fall","autumn","outono","'Autumn' também é entendido nos EUA."],
+  ["trash / garbage","rubbish","lixo",""],
+  ["trash can","bin","lixeira",""],
+  ["cell phone","mobile (phone)","celular",""],
+  ["mail","post","correio, correspondência",""],
+  ["zip code","postcode","CEP",""],
+  ["first floor","ground floor","térreo","No Reino Unido o 'first floor' é o 1º andar acima do térreo."],
+  ["second floor","first floor","primeiro andar",""],
+  ["schedule","timetable","horário, grade (de ônibus, aulas)",""],
+  ["math","maths","matemática",""],
+  ["movie","film","filme",""],
+  ["movie theater","cinema","cinema",""],
+  ["store","shop","loja",""],
+  ["drugstore / pharmacy","chemist's / pharmacy","farmácia",""],
+  ["diaper","nappy","fralda",""],
+  ["pacifier","dummy","chupeta",""],
+  ["stroller","pram / pushchair","carrinho de bebê",""],
+  ["stove","cooker / hob","fogão",""],
+  ["faucet","tap","torneira",""],
+  ["flashlight","torch","lanterna","'Torch' nos EUA é tocha de fogo."],
+  ["yard","garden","quintal","'Garden' nos EUA é só o jardim com plantas."],
+  ["realtor / real estate agent","estate agent","corretor de imóveis",""],
+  ["résumé","CV","currículo",""],
+  ["period","full stop","ponto final (pontuação)",""],
+  ["eraser","rubber","borracha","'Rubber' nos EUA é gíria para preservativo."],
+  ["jelly","jam","geleia","'Jelly' no Reino Unido é gelatina."],
+  ["jello","jelly","gelatina",""],
+  ["eggplant","aubergine","berinjela",""],
+  ["zucchini","courgette","abobrinha",""],
+  ["cilantro","coriander","coentro",""],
+  ["takeout","takeaway","comida para viagem",""],
+  ["check","bill","conta (do restaurante)",""],
+  ["bill","note","nota (dinheiro)","'Bill' nos EUA é nota de dinheiro; no Reino Unido é a conta."],
+  ["two weeks","fortnight","quinze dias, duas semanas",""],
+  ["flat tire","flat tyre","pneu furado","Mesma palavra, grafia diferente (tire/tyre)."],
+  ["color / favorite / center","colour / favourite / centre","cor / favorito / centro","Diferenças de grafia: -or/-our, -er/-re."],
+  ["mad","angry","bravo, com raiva","'Mad' no Reino Unido significa louco."],
+  ["fanny pack","bum bag","pochete","'Fanny' no Reino Unido é palavrão."],
+  ["closet","wardrobe","guarda-roupa",""],
+  ["cab / taxi","taxi","táxi",""],
+  ["round trip","return (ticket)","ida e volta",""],
+  ["one-way","single (ticket)","passagem só de ida",""],
+  ["principal","headteacher / headmaster","diretor(a) de escola",""],
+  ["college","university / uni","faculdade","'College' no Reino Unido costuma ser ensino pós-16, não universidade."],
+  ["grade","year / mark","série (escolar) / nota",""],
+  ["to rent","to hire / to let","alugar",""],
+  ["I'm good","I'm well / I'm fine","estou bem",""],
+];
+const $q = document.getElementById('q'), $out = document.getElementById('lookupOut');
+const aiCfg = Object.assign({ provider: 'gemini', key: '' }, store.get(KEY_AI, {}));
+aiProvider.value = aiCfg.provider; aiKey.value = aiCfg.key;
+document.getElementById('aiSave').addEventListener('click', () => {
+  aiCfg.provider = aiProvider.value; aiCfg.key = aiKey.value.trim(); store.set(KEY_AI, aiCfg);
+  aiSave.textContent = 'Salvo'; setTimeout(() => aiSave.textContent = 'Salvar', 1500);
+});
+
+document.getElementById('lookupBtn').addEventListener('click', lookup);
+$q.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+const norm = s => s.toLowerCase().replace(/[^a-z' ]/g, ' ').replace(/\s+/g, ' ').trim();
+function findRegional(term) {
+  const t = norm(term);
+  return REGIONAL.filter(([us, uk]) => [us, uk].some(side => side.split('/').map(norm).includes(t)));
+}
+async function fetchJSON(url, opts) {
+  const r = await fetch(url, opts);
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+const translate = async (txt, pair = 'en|pt-BR') =>
+  (await fetchJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(txt)}&langpair=${pair}`)).responseData.translatedText;
+const PT_WORDS = /\b(de|da|do|das|dos|um|uma|com|sem|para|por|que|não|nao|sim|casa|carro|banheiro|comida|água|agua|público|publico|onde|como|obrigado|bom|boa|dia|noite|amigo|trabalho|dinheiro|rua|cidade|loja)\b/i;
+const looksPortuguese = t => /[ãõçáéíóúâêôà]/i.test(t) || PT_WORDS.test(t);
+const friendlyError = e => {
+  const m = String(e?.message || e);
+  if (/load failed|failed to fetch|networkerror/i.test(m)) return 'sem acesso à internet a partir desta página. Se estiver testando na prévia do Claude, abra o arquivo direto no navegador ou hospede no GitHub Pages: a prévia bloqueia chamadas externas.';
+  if (/^40[13]$/.test(m)) return 'chave inválida ou sem permissão (' + m + ').';
+  if (m === '404') return 'modelo não encontrado (404). Verifique o provedor.';
+  if (m === '429') return 'limite de uso atingido (429). Aguarde um pouco.';
+  return m;
+};
+
+// Dicionário: tenta a expressão inteira; se não existir, tenta a palavra principal (a última)
+async function lookupDict(term) {
+  const url = w => `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(w)}`;
+  try { return await fetchJSON(url(term)); }
+  catch (e) {
+    const parts = term.split(/\s+/);
+    if (String(e.message) === '404' && parts.length > 1) {
+      const d = await fetchJSON(url(parts[parts.length - 1])); d._fallback = parts[parts.length - 1]; return d;
+    }
+    throw e;
+  }
+}
+async function lookup() {
+  const input = $q.value.trim(); if (!input) { $q.focus(); return; }
+  stopSpeech();
+  $out.innerHTML = `<div class="block"><p class="pt">Buscando "${escapeHtml(input)}"…</p></div>`;
+
+  // Se digitou em português, primeiro descobre o termo em inglês
+  let term = input, fromPt = false;
+  if (looksPortuguese(input)) {
+    const reg = findRegional(input);
+    if (reg.length) { term = reg[0][0].split('/')[0].trim(); fromPt = true; }
+    else { try { term = (await translate(input, 'pt-BR|en')).trim(); fromPt = term.toLowerCase() !== input.toLowerCase(); } catch {} }
+  }
+
+  const [dict, trans, ai] = await Promise.allSettled([
+    lookupDict(term),
+    fromPt ? Promise.resolve(input) : translate(term),
+    aiCfg.key ? askAI(input) : Promise.reject('sem chave')
+  ]);
+  if (ai.status === 'fulfilled' && ai.value.english_term) term = ai.value.english_term;
+  const regionalHits = findRegional(input).concat(findRegional(term)).filter((r, i, a) => a.indexOf(r) === i);
+  const entry = dict.status === 'fulfilled' ? dict.value[0] : null;
+  const regional = regionalHits;
+  const html = [];
+
+  // Cabeçalho
+  const ipa = entry?.phonetic || entry?.phonetics?.find(p => p.text)?.text || '';
+  html.push(`<div class="block"><div class="headword">
+    <b>${escapeHtml(term)}</b> ${ipa ? `<span class="ipa">${escapeHtml(ipa)}</span>` : ''}
+    <button class="flag" data-say="en-US">🇺🇸 ouvir</button>
+    <button class="flag" data-say="en-GB">🇬🇧 ouvir</button>
+    <button class="btn" id="addCard" style="margin-left:auto">+ Flashcard</button>
+  </div>
+  ${fromPt ? `<p class="pt" style="margin-top:8px">Você digitou "${escapeHtml(input)}" → em inglês: <strong>${escapeHtml(term)}</strong></p>` : ''}
+  <p style="margin-top:12px"><strong>Tradução:</strong> ${trans.status === 'fulfilled' ? escapeHtml(trans.value) : `<span class="warn">indisponível: ${escapeHtml(friendlyError(trans.reason))}</span>`}</p>
+  ${ai.status === 'fulfilled' && ai.value.pronunciation ? `<p class="pt"><strong>Pronúncia:</strong> ${escapeHtml(ai.value.pronunciation)}</p>` : ''}
+  </div>`);
+
+  // IA (se configurada)
+  let aiData = null;
+  if (ai.status === 'fulfilled') {
+    aiData = ai.value;
+    html.push(`<div class="block"><h3>Significado e uso</h3>
+      <p>${escapeHtml(aiData.meaning_pt || '')}</p>
+      ${(aiData.examples || []).map(e => `<p style="margin-top:10px">${escapeHtml(e.en)} <button class="flag" data-say-text="${escapeHtml(e.en)}">▶</button><br><span class="pt">${escapeHtml(e.pt)}</span></p>`).join('')}
+      ${aiData.tip ? `<p class="pt" style="margin-top:10px">💡 ${escapeHtml(aiData.tip)}</p>` : ''}
+    </div>`);
+  } else if (aiCfg.key) {
+    html.push(`<div class="block"><p class="warn">A IA não respondeu: ${escapeHtml(friendlyError(ai.reason))}</p></div>`);
+  }
+
+  // 🇺🇸 x 🇬🇧
+  if (aiData?.us_vs_uk) {
+    const r = aiData.us_vs_uk;
+    html.push(`<div class="block"><h3>🇺🇸 Estados Unidos × 🇬🇧 Reino Unido</h3>
+      ${r.same ? `<p>Usa-se da mesma forma nos dois países.</p>` : `<div class="regional"><div><strong>🇺🇸 ${escapeHtml(r.us)}</strong><span class="pt">${escapeHtml(r.us_note || '')}</span></div><div><strong>🇬🇧 ${escapeHtml(r.uk)}</strong><span class="pt">${escapeHtml(r.uk_note || '')}</span></div></div>`}
+      ${r.note ? `<p class="pt" style="margin-top:10px">${escapeHtml(r.note)}</p>` : ''}
+    </div>`);
+  } else if (regional.length) {
+    html.push(`<div class="block"><h3>🇺🇸 Estados Unidos × 🇬🇧 Reino Unido</h3>
+      ${regional.map(([us, uk, pt, note]) => `<div class="regional" style="margin-bottom:10px"><div><strong>🇺🇸 ${escapeHtml(us)}</strong><span class="pt">${escapeHtml(pt)}</span></div><div><strong>🇬🇧 ${escapeHtml(uk)}</strong><span class="pt">${escapeHtml(pt)}</span></div></div>${note ? `<p class="pt">${escapeHtml(note)}</p>` : ''}`).join('')}
+    </div>`);
+  } else {
+    html.push(`<div class="block"><h3>🇺🇸 Estados Unidos × 🇬🇧 Reino Unido</h3><p class="pt">Nenhuma diferença registrada na tabela local. Configure a IA opcional acima para checar qualquer palavra.</p></div>`);
+  }
+
+  // Dicionário (definições em inglês + exemplos traduzidos)
+  if (entry) {
+    const examples = [];
+    const defs = entry.meanings.slice(0, 3).map(m => {
+      const d = m.definitions.slice(0, 2);
+      d.forEach(x => { if (x.example && examples.length < 3) examples.push(x.example); });
+      return `<span class="pos">${escapeHtml(m.partOfSpeech)}</span><ul>${d.map(x => `<li>${escapeHtml(x.definition)}</li>`).join('')}</ul>`;
+    }).join('');
+    let exHtml = '';
+    if (examples.length && !aiData) {
+      const pts = await Promise.allSettled(examples.map(translate));
+      exHtml = `<h3 style="margin-top:14px">Em frases</h3>` + examples.map((e, i) =>
+        `<p>${escapeHtml(e)} <button class="flag" data-say-text="${escapeHtml(e)}">▶</button><br><span class="pt">${pts[i].status === 'fulfilled' ? escapeHtml(pts[i].value) : ''}</span></p>`).join('');
+    }
+    const fb = dict.value._fallback ? ` <span class="pt">(palavra principal: ${escapeHtml(dict.value._fallback)})</span>` : '';
+    html.push(`<div class="block"><h3>Dicionário (em inglês)${fb}</h3>${defs}${exHtml}</div>`);
+  } else if (!aiData) {
+    const netErr = dict.status === 'rejected' && String(dict.reason?.message) !== '404';
+    html.push(`<div class="block"><p class="pt">${netErr
+      ? `Dicionário indisponível: ${escapeHtml(friendlyError(dict.reason))}`
+      : `O dicionário não encontrou "${escapeHtml(term)}". Expressões compostas nem sempre existem lá; tente a palavra principal.`}</p></div>`);
+  }
+
+  $out.innerHTML = html.join('');
+
+  // Áudio
+  $out.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => {
+    const saved = prefs.lang; prefs.lang = b.dataset.say; speak(term, { rate: Math.min(prefs.rate, 0.9) }); prefs.lang = saved;
+  }));
+  $out.querySelectorAll('[data-say-text]').forEach(b => b.addEventListener('click', () => speak(b.dataset.sayText)));
+
+  // Salvar como flashcard
+  document.getElementById('addCard').addEventListener('click', () => {
+    const sentence = aiData?.examples?.[0]?.en || entry?.meanings?.flatMap(m => m.definitions).find(d => d.example)?.example || `I learned the word "${term}" today.`;
+    const t_sentence = aiData?.examples?.[0]?.pt || '';
+    const t_word = trans.status === 'fulfilled' ? trans.value : (aiData?.meaning_pt || '');
+    const c = { level: 'Meu', word: term, sentence, t_word, t_sentence };
+    customWords.push(c); store.set(KEY_CUSTOM, customWords);
+    deck.push(c); buildQueue(); renderStats();
+    addCard.textContent = 'Adicionado ✓'; addCard.disabled = true;
+  });
+}
+
+// ---- IA opcional (chave do próprio usuário, guardada só no navegador) ----
+const AI_PROMPT = term => `You are an English teacher for a Brazilian Portuguese speaker. The learner typed: "${term}". It may be in English or in Portuguese. If it is Portuguese, first find the most natural English equivalent. Reply ONLY with JSON (no markdown):
+{"english_term":"the English word/expression (US form)","pronunciation":"como pronunciar, escrito de forma simples para um brasileiro, ex.: 'RÉST-rum' + IPA","meaning_pt":"explicação curta em português do significado e quando usar","examples":[{"en":"frase natural 1","pt":"tradução"},{"en":"frase natural 2","pt":"tradução"},{"en":"frase natural 3","pt":"tradução"}],"us_vs_uk":{"same":true|false,"us":"termo/uso nos EUA","us_note":"nota curta","uk":"termo/uso no Reino Unido","uk_note":"nota curta","note":"diferença de significado, conotação ou grafia, em português"},"tip":"dica curta em português (falsos cognatos, pegadinhas)"}`;
+
+async function askAI(term) {
+  const { provider, key } = aiCfg;
+  let text;
+  if (provider === 'gemini') {
+    let d, lastErr;
+    for (const model of ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.0-flash']) {
+      try {
+        d = await fetchJSON(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({ contents: [{ parts: [{ text: AI_PROMPT(term) }] }], generationConfig: { responseMimeType: 'application/json' } })
+        });
+        break;
+      } catch (e) { lastErr = e; if (String(e.message) !== '404') throw e; }
+    }
+    if (!d) throw lastErr;
+    text = d.candidates[0].content.parts[0].text;
+  } else if (provider === 'openai') {
+    const d = await fetchJSON('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+      body: JSON.stringify({ model: 'gpt-4o-mini', response_format: { type: 'json_object' }, messages: [{ role: 'user', content: AI_PROMPT(term) }] })
+    });
+    text = d.choices[0].message.content;
+  } else {
+    const d = await fetchJSON('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5', max_tokens: 800, messages: [{ role: 'user', content: AI_PROMPT(term) }] })
+    });
+    text = d.content.find(c => c.type === 'text').text;
+  }
+  return JSON.parse(text.replace(/```json|```/g, '').trim());
+}
+
+buildQueue(); showCard();
+</script>
+</body>
+</html>

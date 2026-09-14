@@ -29,7 +29,7 @@
   button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
   button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
- 
+
   /* ============ HEADER / TABS ============ */
   header { padding: 20px 20px 0; max-width: 760px; width: 100%; margin: 0 auto; }
   h1 { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; margin: 0 0 14px; letter-spacing: -0.01em; }
@@ -37,10 +37,10 @@
   .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
   .tab { flex: 1; padding: 12px 8px; color: var(--ink-soft); border-bottom: 2px solid transparent; margin-bottom: -1px; font-size: 0.95rem; }
   .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--amber); }
- 
+
   main { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 20px; }
   section[hidden] { display: none; }
- 
+
   /* ============ CONTROLS ============ */
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
   .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
@@ -54,7 +54,7 @@
   .speed { display: flex; align-items: center; gap: 10px; color: var(--ink-soft); font-size: 0.9rem; }
   .speed input { accent-color: var(--amber); width: 120px; }
   .hint { color: var(--ink-soft); font-size: 0.85rem; margin: 6px 0 0; }
- 
+
   /* ============ READER ============ */
   textarea {
     width: 100%; min-height: 240px; resize: vertical;
@@ -64,12 +64,12 @@
   textarea::placeholder { color: var(--ink-soft); }
   .reading { font-family: var(--serif); font-size: 1.15rem; line-height: 1.65; padding: 20px; background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--line); }
   .reading mark { background: rgba(227,176,75,0.28); color: var(--ink); border-radius: 3px; padding: 0 2px; }
- 
+
   /* ============ FLASHCARD ============ */
   .stats { display: flex; gap: 14px; flex-wrap: wrap; color: var(--ink-soft); font-size: 0.85rem; margin-bottom: 14px; }
   .stats b { color: var(--ink); font-weight: 600; }
   .stats .k { color: var(--teal); } .stats .a { color: var(--amber); } .stats .u { color: var(--rose); }
- 
+
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px 24px; }
   .level { display: inline-block; font-size: 0.75rem; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); }
   .word { font-family: var(--serif); font-size: clamp(2.4rem, 9vw, 3.4rem); margin: 14px 0 6px; line-height: 1.1; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
@@ -92,7 +92,7 @@
   .tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
   .tools .btn { font-size: 0.85rem; padding: 8px 12px; }
   .sr-only { position: absolute; left: -9999px; }
- 
+
   /* ============ CONSULTA ============ */
   .search { display: flex; gap: 8px; }
   .search input { flex: 1; min-width: 0; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; font-size: 1.05rem; }
@@ -118,7 +118,7 @@
   .ai-setup select, .ai-setup input { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px 10px; font-size: 0.9rem; }
   .ai-setup input { flex: 1; min-width: 180px; }
   details summary { cursor: pointer; color: var(--ink-soft); font-size: 0.9rem; }
- 
+
   .reading .sent { border-radius: 4px; padding: 0 2px; transition: background .2s; }
   .reading .sent.active { background: rgba(227,176,75,0.09); }
   .reading .w { cursor: pointer; border-radius: 3px; }
@@ -131,12 +131,12 @@
   .recent button { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px; font-family: var(--serif); }
   .recent button small { display: block; color: var(--ink-soft); font-family: var(--sans); font-size: 0.75rem; margin-top: 2px; }
   .btn[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); }
- 
+
   footer { text-align: center; color: var(--ink-soft); font-size: 0.75rem; padding: 18px; }
 </style>
 </head>
 <body>
- 
+
 <header>
   <h1>English <span>Study Hub</span></h1>
   <nav class="tabs" role="tablist">
@@ -145,13 +145,13 @@
     <button class="tab" role="tab" aria-selected="false" data-tab="lookup">Consultar</button>
   </nav>
 </header>
- 
+
 <main>
   <!-- ========== MÓDULO 1: LEITOR ========== -->
   <section id="reader" role="tabpanel">
     <textarea id="text" placeholder="Cole aqui um trecho do livro, artigo ou texto em inglês…" spellcheck="false"></textarea>
     <div id="readingView" class="reading" hidden></div>
- 
+
     <div id="wordCard" class="block wordcard" hidden>
       <div class="headword">
         <b id="wcWord"></b>
@@ -163,7 +163,7 @@
       </div>
       <p id="wcTrans" class="pt" style="margin:10px 0 0"></p>
     </div>
- 
+
     <div class="row">
       <div class="seg" id="accent" role="group" aria-label="Sotaque">
         <button aria-pressed="true" data-lang="en-US">🇺🇸 Americano</button>
@@ -204,13 +204,13 @@
     </div>
     <p class="hint" id="voiceHint"></p>
     <p class="hint">Dica: clique em qualquer palavra do texto para ouvir, traduzir ou salvar como flashcard. A leitura salva onde você parou.</p>
- 
+
     <details id="recent">
       <summary>Últimos textos</summary>
       <div id="recentList" class="recent"></div>
     </details>
   </section>
- 
+
   <!-- ========== MÓDULO 2: FLASHCARDS ========== -->
   <section id="cards" role="tabpanel" hidden>
     <div class="row" style="margin-top:0">
@@ -231,7 +231,7 @@
       <span>Dominadas <b id="sMastered">0</b>/<span id="sDeck">0</span></span>
       <span>Novas <b id="sNew">0</b></span>
     </div>
- 
+
     <div class="card" id="card">
       <span class="level" id="cLevel">A1</span>
       <div class="word">
@@ -246,12 +246,12 @@
         </button>
         <span id="cSent">—</span>
       </div>
- 
+
       <div class="meaning" id="meaning" hidden>
         <p class="t-word" id="cTWord"></p>
         <p class="t-sent" id="cTSent"></p>
       </div>
- 
+
       <div class="actions" id="revealRow">
         <button class="btn primary" id="reveal">Ver significado</button>
       </div>
@@ -262,7 +262,7 @@
       </div>
       <div class="progress"><i id="bar"></i></div>
     </div>
- 
+
     <div class="tools">
       <button class="btn" id="shuffle">Embaralhar</button>
       <button class="btn" id="importBtn">Importar deck (JSON)</button>
@@ -279,7 +279,7 @@
       <button class="btn primary" id="lookupBtn">Buscar</button>
     </div>
     <p class="hint">Pode digitar em inglês ou em português: o app detecta o idioma, mostra o termo em inglês, a pronúncia 🇺🇸/🇬🇧, o significado e como usar em frases. Sem chave, usa dicionário e tradução públicos + tabela de diferenças embutida; com a IA opcional, cobre qualquer palavra.</p>
- 
+
     <details>
       <summary>IA opcional (sua própria chave, gratuita no Gemini)</summary>
       <div class="ai-setup open">
@@ -292,13 +292,13 @@
         <button class="btn" id="aiSave">Salvar</button>
       </div>
     </details>
- 
+
     <div id="lookupOut" class="lookup"></div>
   </section>
 </main>
- 
+
 <footer>Roda 100% no navegador. Nada é enviado a servidores.</footer>
- 
+
 <script>
 /* ==================================================================
    DECK BASE (A1/A2). Adicione mais itens aqui ou importe um JSON.
@@ -1507,7 +1507,7 @@ const BASE_DECK = [
   ["B1","east","The sun rises in the east.","leste","O sol nasce no leste."],
   ["B1","west","Go west for two miles.","oeste","Siga para o oeste por duas milhas."]
 ];
- 
+
 /* ============ STORAGE (com fallback em memória) ============ */
 const KEY_STATS = 'esh_stats_v1', KEY_DECK = 'esh_deck_v1', KEY_PREFS = 'esh_prefs_v1';
 const mem = {};
@@ -1516,12 +1516,12 @@ const store = {
   set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch {} }
 };
- 
+
 /* ============ SPEECH ============ */
 const synth = window.speechSynthesis;
 const prefs = Object.assign({ lang: 'en-US', rate: 0.85 }, store.get(KEY_PREFS, {}));
 let voices = [];
- 
+
 function loadVoices() {
   voices = synth ? synth.getVoices() : [];
   const hint = document.getElementById('voiceHint'), sel = document.getElementById('voiceSel');
@@ -1562,7 +1562,7 @@ document.getElementById('testRate').addEventListener('click', () => {
   speak(`This is a speed test at ${prefs.rate.toFixed(2)}.`);
 });
 if (synth) { synth.onvoiceschanged = loadVoices; loadVoices(); }
- 
+
 /* ============ MOTOR DE VOZ NATURAL (Kokoro, 100% no navegador, opcional) ============ */
 const KOKORO_VOICES = { 'en-US': { f: 'af_heart', m: 'am_michael' }, 'en-GB': { f: 'bf_emma', m: 'bm_george' } };
 const K = { worker: null, ready: false, loading: false, failed: false, cache: new Map(), ctx: null, src: null, pending: new Map(), nextId: 1, timers: [] };
@@ -1643,7 +1643,7 @@ async function kokoroSpeak(text, { rate, onBoundary, onEnd }) {
   K.src = src; src.start();
 }
 function kokoroPrefetch(text) { if (prefs.engine === 'kokoro' && K.ready) kokoroGen(text, Math.min(Math.max(prefs.rate, 0.5), 1.5)).catch(() => {}); }
- 
+
 function speak(text, opts = {}) {
   if (!text.trim()) return;
   if (prefs.engine === 'kokoro' && K.ready) { if (synth) synth.cancel(); return kokoroSpeak(text, { rate: prefs.rate, ...opts }); }
@@ -1662,14 +1662,14 @@ function nativeSpeak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
   setTimeout(() => synth.speak(u), 30);
 }
 function stopSpeech() { K.gen = (K.gen || 0) + 1; kokoroStop(); if (synth) synth.cancel(); }
- 
+
 /* ============ TABS ============ */
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
   document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === t));
   document.querySelectorAll('[role=tabpanel]').forEach(p => p.hidden = p.id !== t.dataset.tab);
   resetReader();
 }));
- 
+
 /* ============ HELPERS DE REDE (usados pelo Leitor e pelo Consultar) ============ */
 async function fetchJSON(url, opts) {
   const r = await fetch(url, opts);
@@ -1686,14 +1686,14 @@ const friendlyError = e => {
   if (m === '429') return 'limite de uso atingido (429). Aguarde um pouco.';
   return m;
 };
- 
+
 /* ============ MÓDULO 1: LEITOR ============ */
 const KEY_TEXTS = 'esh_texts_v1';
 const $text = document.getElementById('text'), $view = document.getElementById('readingView');
 const $listen = document.getElementById('listen'), $stop = document.getElementById('stop');
 const $rate = document.getElementById('rate'), $rateVal = document.getElementById('rateVal');
 const R = { txt: '', sents: [], cur: 0, word: -1, playing: false, repeat: 0, gen: 0 };
- 
+
 function setRate(v) {
   prefs.rate = Math.round(v * 100) / 100; $rate.value = prefs.rate;
   $rateVal.textContent = prefs.rate.toFixed(2) + '×'; store.set(KEY_PREFS, prefs);
@@ -1704,7 +1704,7 @@ function setRate(v) {
 setRate(prefs.rate);
 $rate.addEventListener('input', () => setRate(+$rate.value));
 document.querySelectorAll('#presets button').forEach(b => b.addEventListener('click', () => setRate(+b.dataset.rate)));
- 
+
 document.querySelectorAll('#accent button').forEach(b => {
   b.setAttribute('aria-pressed', b.dataset.lang === prefs.lang);
   b.addEventListener('click', () => {
@@ -1713,7 +1713,7 @@ document.querySelectorAll('#accent button').forEach(b => {
     loadVoices(); if (R.playing) playSentence(R.cur, Math.max(R.word, 0));
   });
 });
- 
+
 // --- Preparar texto: frases -> palavras (com posições) e montar a visualização ---
 function prepareText(txt) {
   R.txt = txt; R.sents = []; R.cur = 0; R.word = -1;
@@ -1744,7 +1744,7 @@ function markWord(i, j) {
 }
 function showReading() { $view.hidden = false; $text.hidden = true; }
 function setPlaying(on) { R.playing = on; $listen.disabled = on; $stop.disabled = !on; }
- 
+
 // --- Tocar uma frase (a partir de uma palavra), encadeando as próximas ---
 function playSentence(i, fromWord = 0) {
   if (!R.sents.length) return;
@@ -1771,7 +1771,7 @@ function playSentence(i, fromWord = 0) {
 }
 function stopReading() { R.gen++; R.repeat = 0; stopSpeech(); setPlaying(false); document.getElementById('repeatSent').setAttribute('aria-pressed', 'false'); }
 function resetReader() { stopReading(); }
- 
+
 $listen.addEventListener('click', () => {
   const txt = $text.value.trim(); if (!txt) { $text.focus(); return; }
   if (txt !== R.txt) { prepareText(txt); R.cur = restorePosition(txt); }
@@ -1785,7 +1785,7 @@ document.getElementById('repeatSent').addEventListener('click', e => {
   R.repeat = 2; e.currentTarget.setAttribute('aria-pressed', 'true'); playSentence(R.cur);
 });
 document.getElementById('edit').addEventListener('click', () => { stopReading(); $view.hidden = true; $text.hidden = false; wordCard.hidden = true; shadowOut.hidden = true; $text.focus(); });
- 
+
 // --- Clique na palavra: ouvir / traduzir / salvar ---
 const wordCard = document.getElementById('wordCard');
 let wcState = null;
@@ -1814,7 +1814,7 @@ document.getElementById('wcAdd').addEventListener('click', () => {
 document.getElementById('wcLookup').addEventListener('click', () => {
   document.querySelector('.tab[data-tab="lookup"]').click(); q.value = wcState.word; lookup();
 });
- 
+
 // --- Retomar de onde parou + últimos textos ---
 function textKey(txt) { let h = 0; for (const ch of txt) h = (h * 31 + ch.charCodeAt(0)) | 0; return String(h); }
 function loadTexts() { return store.get(KEY_TEXTS, []); }
@@ -1835,7 +1835,7 @@ function renderRecent() {
   }));
 }
 renderRecent();
- 
+
 // --- Shadowing: ouvir a frase e repetir no microfone ---
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const $shadow = document.getElementById('shadow'), $shadowOut = document.getElementById('shadowOut');
@@ -1859,16 +1859,16 @@ $shadow.addEventListener('click', () => {
   rec.onend = () => { if (/ouvindo/.test($shadowOut.textContent)) $shadowOut.innerHTML = '<p class="pt">Nada foi captado. Tente falar mais perto do microfone.</p>'; };
   try { rec.start(); } catch (err) { $shadowOut.innerHTML = `<p class="warn">${escapeHtml(friendlyError(err))}</p>`; }
 });
- 
+
 function escapeHtml(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
- 
+
 /* ============ MÓDULO 2: FLASHCARDS ============ */
 const KEY_CUSTOM = 'esh_custom_v1', KEY_AI = 'esh_ai_v1';
 let customWords = store.get(KEY_CUSTOM, []);
 let deck = normalizeDeck(store.get(KEY_DECK, null) || BASE_DECK).concat(customWords);
 let stats = store.get(KEY_STATS, { total: 0, known: 0, almost: 0, unknown: 0, words: {} });
 let queue = [], idx = 0, card = null;
- 
+
 function normalizeDeck(d) {
   return d.map(x => Array.isArray(x)
     ? { level: x[0], word: x[1], sentence: x[2], t_word: x[3], t_sentence: x[4] }
@@ -1936,7 +1936,7 @@ document.querySelectorAll('[data-grade]').forEach(b => b.addEventListener('click
 document.getElementById('cPlayWord').addEventListener('click', () => speak(card.word));
 document.getElementById('cPlaySent').addEventListener('click', () => speak(card.sentence));
 document.getElementById('shuffle').addEventListener('click', () => { buildQueue(); showCard(); });
- 
+
 document.getElementById('importBtn').addEventListener('click', () => importFile.click());
 importFile.addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
@@ -1956,15 +1956,15 @@ document.getElementById('resetStats').addEventListener('click', () => {
   stats = { total: 0, known: 0, almost: 0, unknown: 0, words: {} }; store.set(KEY_STATS, stats);
   buildQueue(); showCard();
 });
- 
+
 // Atalhos de teclado: Espaço revela, 1/2/3 avaliam
 document.addEventListener('keydown', e => {
   if (document.getElementById('cards').hidden || e.target.tagName === 'TEXTAREA') return;
   if (e.code === 'Space' && !revealRow.hidden) { e.preventDefault(); reveal.click(); }
   if (!gradeRow.hidden && ['1','2','3'].includes(e.key)) gradeRow.children[+e.key - 1].click();
 });
- 
- 
+
+
 /* ============ MÓDULO 3: CONSULTAR PALAVRA ============ */
 // Tabela embutida de diferenças 🇺🇸 x 🇬🇧 (termo US, termo UK, português, observação)
 const REGIONAL = [
@@ -2047,10 +2047,10 @@ document.getElementById('aiSave').addEventListener('click', () => {
   aiCfg.provider = aiProvider.value; aiCfg.key = aiKey.value.trim(); store.set(KEY_AI, aiCfg);
   aiSave.textContent = 'Salvo'; setTimeout(() => aiSave.textContent = 'Salvar', 1500);
 });
- 
+
 document.getElementById('lookupBtn').addEventListener('click', lookup);
 $q.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
- 
+
 const norm = s => s.toLowerCase().replace(/[^a-z' ]/g, ' ').replace(/\s+/g, ' ').trim();
 function findRegional(term) {
   const t = norm(term);
@@ -2058,7 +2058,7 @@ function findRegional(term) {
 }
 const PT_WORDS = /\b(de|da|do|das|dos|um|uma|com|sem|para|por|que|não|nao|sim|casa|carro|banheiro|comida|água|agua|público|publico|onde|como|obrigado|bom|boa|dia|noite|amigo|trabalho|dinheiro|rua|cidade|loja)\b/i;
 const looksPortuguese = t => /[ãõçáéíóúâêôà]/i.test(t) || PT_WORDS.test(t);
- 
+
 // Dicionário: tenta a expressão inteira; se não existir, tenta a palavra principal (a última)
 async function lookupDict(term) {
   const url = w => `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(w)}`;
@@ -2075,7 +2075,7 @@ async function lookup() {
   const input = $q.value.trim(); if (!input) { $q.focus(); return; }
   stopSpeech();
   $out.innerHTML = `<div class="block"><p class="pt">Buscando "${escapeHtml(input)}"…</p></div>`;
- 
+
   // Se digitou em português, primeiro descobre o termo em inglês
   let term = input, fromPt = false;
   if (looksPortuguese(input)) {
@@ -2083,7 +2083,7 @@ async function lookup() {
     if (reg.length) { term = reg[0][0].split('/')[0].trim(); fromPt = true; }
     else { try { term = (await translate(input, 'pt-BR|en')).trim(); fromPt = term.toLowerCase() !== input.toLowerCase(); } catch {} }
   }
- 
+
   const [dict, trans, ai] = await Promise.allSettled([
     lookupDict(term),
     fromPt ? Promise.resolve(input) : translate(term),
@@ -2094,7 +2094,7 @@ async function lookup() {
   const entry = dict.status === 'fulfilled' ? dict.value[0] : null;
   const regional = regionalHits;
   const html = [];
- 
+
   // Cabeçalho
   const ipa = entry?.phonetic || entry?.phonetics?.find(p => p.text)?.text || '';
   html.push(`<div class="block"><div class="headword">
@@ -2107,7 +2107,7 @@ async function lookup() {
   <p style="margin-top:12px"><strong>Tradução:</strong> ${trans.status === 'fulfilled' ? escapeHtml(trans.value) : `<span class="warn">indisponível: ${escapeHtml(friendlyError(trans.reason))}</span>`}</p>
   ${ai.status === 'fulfilled' && ai.value.pronunciation ? `<p class="pt"><strong>Pronúncia:</strong> ${escapeHtml(ai.value.pronunciation)}</p>` : ''}
   </div>`);
- 
+
   // IA (se configurada)
   let aiData = null;
   if (ai.status === 'fulfilled') {
@@ -2120,7 +2120,7 @@ async function lookup() {
   } else if (aiCfg.key) {
     html.push(`<div class="block"><p class="warn">A IA não respondeu: ${escapeHtml(friendlyError(ai.reason))}</p></div>`);
   }
- 
+
   // 🇺🇸 x 🇬🇧
   if (aiData?.us_vs_uk) {
     const r = aiData.us_vs_uk;
@@ -2135,7 +2135,7 @@ async function lookup() {
   } else {
     html.push(`<div class="block"><h3>🇺🇸 Estados Unidos × 🇬🇧 Reino Unido</h3><p class="pt">Nenhuma diferença registrada na tabela local. Configure a IA opcional acima para checar qualquer palavra.</p></div>`);
   }
- 
+
   // Dicionário (definições em inglês + exemplos traduzidos)
   if (entry) {
     const examples = [];
@@ -2158,15 +2158,15 @@ async function lookup() {
       ? `Dicionário indisponível: ${escapeHtml(friendlyError(dict.reason))}`
       : `O dicionário não encontrou "${escapeHtml(term)}". Expressões compostas nem sempre existem lá; tente a palavra principal.`}</p></div>`);
   }
- 
+
   $out.innerHTML = html.join('');
- 
+
   // Áudio
   $out.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => {
     const saved = prefs.lang; prefs.lang = b.dataset.say; speak(term); prefs.lang = saved;
   }));
   $out.querySelectorAll('[data-say-text]').forEach(b => b.addEventListener('click', () => speak(b.dataset.sayText)));
- 
+
   // Salvar como flashcard
   document.getElementById('addCard').addEventListener('click', () => {
     const sentence = aiData?.examples?.[0]?.en || entry?.meanings?.flatMap(m => m.definitions).find(d => d.example)?.example || `I learned the word "${term}" today.`;
@@ -2178,11 +2178,11 @@ async function lookup() {
     addCard.textContent = 'Adicionado ✓'; addCard.disabled = true;
   });
 }
- 
+
 // ---- IA opcional (chave do próprio usuário, guardada só no navegador) ----
 const AI_PROMPT = term => `You are an English teacher for a Brazilian Portuguese speaker. The learner typed: "${term}". It may be in English or in Portuguese. If it is Portuguese, first find the most natural English equivalent. Reply ONLY with JSON (no markdown):
 {"english_term":"the English word/expression (US form)","pronunciation":"como pronunciar, escrito de forma simples para um brasileiro, ex.: 'RÉST-rum' + IPA","meaning_pt":"explicação curta em português do significado e quando usar","examples":[{"en":"frase natural 1","pt":"tradução"},{"en":"frase natural 2","pt":"tradução"},{"en":"frase natural 3","pt":"tradução"}],"us_vs_uk":{"same":true|false,"us":"termo/uso nos EUA","us_note":"nota curta","uk":"termo/uso no Reino Unido","uk_note":"nota curta","note":"diferença de significado, conotação ou grafia, em português"},"tip":"dica curta em português (falsos cognatos, pegadinhas)"}`;
- 
+
 async function askAI(term) {
   const { provider, key } = aiCfg;
   let text;
@@ -2215,9 +2215,8 @@ async function askAI(term) {
   }
   return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
- 
+
 buildQueue(); showCard();
 </script>
 </body>
 </html>
- 

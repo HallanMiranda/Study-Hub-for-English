@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -188,6 +187,18 @@
     </div>
     <div id="shadowOut" class="block" hidden></div>
     <div class="row" style="margin-top:6px">
+      <div class="seg" id="engineSeg" role="group" aria-label="Motor de voz">
+        <button data-engine="native">Voz do sistema</button>
+        <button data-engine="kokoro">✨ Voz natural</button>
+      </div>
+      <div class="seg" id="genderSeg" role="group" aria-label="Voz natural" hidden>
+        <button data-gender="f">Feminina</button>
+        <button data-gender="m">Masculina</button>
+      </div>
+    </div>
+    <div id="kokoroStatus" class="hint" hidden></div>
+    <div class="progress" id="kokoroBar" hidden style="margin:6px 0 0"><i></i></div>
+    <div class="row" style="margin-top:6px" id="nativeVoiceRow">
       <label class="speed">Voz <select id="voiceSel" style="background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;max-width:260px"></select></label>
       <button class="btn" id="testRate" style="padding:8px 12px;font-size:0.85rem">🔊 Testar velocidade</button>
     </div>
@@ -259,7 +270,7 @@
       <button class="btn" id="exportStats">Exportar progresso</button>
       <button class="btn ghost" id="resetStats">Zerar progresso</button>
     </div>
-    <p class="hint">Formato do JSON: <code>[{"level":"A1","word":"…","sentence":"…","t_word":"…","t_sentence":"…"}]</code>. O sotaque e a velocidade escolhidos na aba Leitor valem aqui também.</p>
+    <p class="hint">Formato do JSON: <code>[{"level":"A1","word":"…","sentence":"…","t_word":"…","t_sentence":"…"}]</code>. O sotaque, a velocidade e o motor de voz escolhidos na aba Leitor valem aqui também.</p>
   </section>
   <!-- ========== MÓDULO 3: CONSULTAR PALAVRA ========== -->
   <section id="lookup" role="tabpanel" hidden>
@@ -1529,6 +1540,21 @@ function pickVoice(lang) {
   const prefer = exact.find(v => /google|natural|premium|enhanced|siri/i.test(v.name)) || exact[0];
   return prefer || voices.find(v => v.lang.toLowerCase().startsWith(lang.slice(0,2)));
 }
+function renderEngine() {
+  const eng = prefs.engine || 'native';
+  document.querySelectorAll('#engineSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.engine === eng));
+  document.querySelectorAll('#genderSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.gender === (prefs.gender || 'f')));
+  document.getElementById('genderSeg').hidden = eng !== 'kokoro';
+  document.getElementById('nativeVoiceRow').style.display = eng === 'kokoro' ? 'none' : '';
+}
+document.querySelectorAll('#engineSeg button').forEach(b => b.addEventListener('click', () => {
+  prefs.engine = b.dataset.engine; store.set(KEY_PREFS, prefs); renderEngine(); stopSpeech();
+  if (prefs.engine === 'kokoro') kokoroLoad(); else kokoroStatus('');
+}));
+document.querySelectorAll('#genderSeg button').forEach(b => b.addEventListener('click', () => {
+  prefs.gender = b.dataset.gender; store.set(KEY_PREFS, prefs); renderEngine(); if (R.playing) playSentence(R.cur, Math.max(R.word, 0));
+}));
+renderEngine(); if (prefs.engine === 'kokoro') kokoroLoad();
 document.getElementById('voiceSel').addEventListener('change', e => {
   prefs.voices = prefs.voices || {}; prefs.voices[prefs.lang] = e.target.value; store.set(KEY_PREFS, prefs); loadVoices();
 });
@@ -1537,9 +1563,95 @@ document.getElementById('testRate').addEventListener('click', () => {
 });
 if (synth) { synth.onvoiceschanged = loadVoices; loadVoices(); }
  
-function speak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
+/* ============ MOTOR DE VOZ NATURAL (Kokoro, 100% no navegador, opcional) ============ */
+const KOKORO_VOICES = { 'en-US': { f: 'af_heart', m: 'am_michael' }, 'en-GB': { f: 'bf_emma', m: 'bm_george' } };
+const K = { worker: null, ready: false, loading: false, failed: false, cache: new Map(), ctx: null, src: null, pending: new Map(), nextId: 1, timers: [] };
+const KOKORO_WORKER = `
+  let tts;
+  self.onmessage = async e => {
+    const { id, type } = e.data;
+    try {
+      if (type === 'load') {
+        const { KokoroTTS } = await import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm');
+        tts = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', {
+          dtype: e.data.dtype, device: e.data.device,
+          progress_callback: p => { if (p.status === 'progress') self.postMessage({ id, type: 'progress', file: p.file, progress: p.progress }); }
+        });
+        self.postMessage({ id, type: 'ready' });
+      } else if (type === 'gen') {
+        const a = await tts.generate(e.data.text, { voice: e.data.voice, speed: e.data.speed });
+        self.postMessage({ id, type: 'audio', audio: a.audio, rate: a.sampling_rate }, [a.audio.buffer]);
+      }
+    } catch (err) { self.postMessage({ id, type: 'error', message: String(err && err.message || err) }); }
+  };`;
+function kokoroStatus(msg, pct) {
+  const el = document.getElementById('kokoroStatus'), bar = document.getElementById('kokoroBar');
+  el.hidden = !msg; el.textContent = msg || '';
+  bar.hidden = pct == null; if (pct != null) bar.firstElementChild.style.width = pct + '%';
+}
+function kokoroLoad() {
+  if (K.ready || K.loading) return;
+  K.loading = true; K.failed = false;
+  kokoroStatus('Preparando a voz natural… (download único de ~90 MB, fica salvo no navegador)', 0);
+  try {
+    K.worker = new Worker(URL.createObjectURL(new Blob([KOKORO_WORKER], { type: 'text/javascript' })), { type: 'module' });
+  } catch (err) { K.loading = false; K.failed = true; kokoroStatus('Este navegador não suporta a voz natural. Usando a voz do sistema.'); return; }
+  const files = {};
+  K.worker.onmessage = e => {
+    const m = e.data;
+    if (m.type === 'progress') { files[m.file] = m.progress || 0; const vals = Object.values(files); kokoroStatus(`Baixando modelo de voz… ${Math.round(vals.reduce((a, b) => a + b, 0) / vals.length)}%`, vals.reduce((a, b) => a + b, 0) / vals.length); return; }
+    if (m.type === 'ready') { K.ready = true; K.loading = false; kokoroStatus('✨ Voz natural pronta. A primeira frase pode levar alguns segundos.'); setTimeout(() => kokoroStatus(''), 4000); return; }
+    const pend = K.pending.get(m.id); if (!pend) return; K.pending.delete(m.id);
+    if (m.type === 'audio') pend.resolve({ audio: m.audio, rate: m.rate }); else pend.reject(new Error(m.message));
+  };
+  K.worker.onerror = err => { K.loading = false; K.failed = true; kokoroStatus('Não foi possível carregar a voz natural (' + (err.message || 'erro') + '). Usando a voz do sistema.'); };
+  const id = K.nextId++;
+  K.pending.set(id, { resolve() {}, reject: err => { K.loading = false; K.failed = true; kokoroStatus('Falha ao carregar a voz natural: ' + err.message + '. Usando a voz do sistema.'); } });
+  K.worker.postMessage({ id, type: 'load', dtype: 'q8', device: 'wasm' });
+}
+function kokoroVoice() { return (KOKORO_VOICES[prefs.lang] || KOKORO_VOICES['en-US'])[prefs.gender || 'f']; }
+function kokoroGen(text, speed) {
+  const voice = kokoroVoice(), key = `${voice}|${speed}|${text}`;
+  if (K.cache.has(key)) return K.cache.get(key);
+  const pr = new Promise((resolve, reject) => {
+    const id = K.nextId++; K.pending.set(id, { resolve, reject });
+    K.worker.postMessage({ id, type: 'gen', text, voice, speed });
+  });
+  pr.catch(() => K.cache.delete(key));
+  K.cache.set(key, pr); if (K.cache.size > 60) K.cache.delete(K.cache.keys().next().value);
+  return pr;
+}
+function kokoroStop() { K.timers.forEach(clearTimeout); K.timers = []; if (K.src) { try { K.src.stop(); } catch {} K.src = null; } }
+async function kokoroSpeak(text, { rate, onBoundary, onEnd }) {
+  const gen = ++K.gen; kokoroStop();
+  let data;
+  try { data = await kokoroGen(text, Math.min(Math.max(rate, 0.5), 1.5)); }
+  catch (err) { kokoroStatus('Voz natural falhou nesta frase; usando a voz do sistema.'); return nativeSpeak(text, { rate, onBoundary, onEnd }); }
+  if (gen !== K.gen) return;
+  K.ctx = K.ctx || new (window.AudioContext || window.webkitAudioContext)();
+  if (K.ctx.state === 'suspended') await K.ctx.resume();
+  const buf = K.ctx.createBuffer(1, data.audio.length, data.rate); buf.copyToChannel(data.audio, 0);
+  const src = K.ctx.createBufferSource(); src.buffer = buf; src.connect(K.ctx.destination);
+  const dur = buf.duration;
+  // Destaque aproximado por palavra, proporcional aos caracteres (o modelo não expõe tempos exatos)
+  if (onBoundary) {
+    const words = []; const re = /\S+/g; let m; while ((m = re.exec(text)) !== null) words.push({ i: m.index, len: m[0].length });
+    const total = words.reduce((a, w) => a + w.len + 1, 0); let acc = 0;
+    words.forEach(w => { const t = (acc / total) * dur * 1000; acc += w.len + 1; K.timers.push(setTimeout(() => { if (gen === K.gen) onBoundary({ name: 'word', charIndex: w.i }); }, t)); });
+  }
+  src.onended = () => { if (gen === K.gen && K.src === src) { K.src = null; onEnd && onEnd(); } };
+  K.src = src; src.start();
+}
+function kokoroPrefetch(text) { if (prefs.engine === 'kokoro' && K.ready) kokoroGen(text, Math.min(Math.max(prefs.rate, 0.5), 1.5)).catch(() => {}); }
+ 
+function speak(text, opts = {}) {
+  if (!text.trim()) return;
+  if (prefs.engine === 'kokoro' && K.ready) { if (synth) synth.cancel(); return kokoroSpeak(text, { rate: prefs.rate, ...opts }); }
+  return nativeSpeak(text, opts);
+}
+function nativeSpeak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
   if (!synth || !text.trim()) return;
-  synth.cancel();
+  kokoroStop(); synth.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = prefs.lang; u.rate = rate; u.pitch = 1;
   const v = pickVoice(prefs.lang); if (v) u.voice = v;
@@ -1549,7 +1661,7 @@ function speak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
   // Chrome às vezes ignora speak() logo após cancel(); um pequeno atraso evita
   setTimeout(() => synth.speak(u), 30);
 }
-function stopSpeech() { if (synth) synth.cancel(); }
+function stopSpeech() { K.gen = (K.gen || 0) + 1; kokoroStop(); if (synth) synth.cancel(); }
  
 /* ============ TABS ============ */
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
@@ -1641,6 +1753,7 @@ function playSentence(i, fromWord = 0) {
   const chunk = R.txt.slice(sn.start + rel, sn.end);
   markSentence(i); if (fromWord > 0) markWord(i, fromWord);
   setPlaying(true);
+  if (i + 1 < R.sents.length) kokoroPrefetch(R.txt.slice(R.sents[i + 1].start, R.sents[i + 1].end));
   speak(chunk, {
     onBoundary: e => {
       if (gen !== R.gen || e.name !== 'word') return;

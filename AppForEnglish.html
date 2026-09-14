@@ -1565,7 +1565,7 @@ if (synth) { synth.onvoiceschanged = loadVoices; loadVoices(); }
 
 /* ============ MOTOR DE VOZ NATURAL (Kokoro, 100% no navegador, opcional) ============ */
 const KOKORO_VOICES = { 'en-US': { f: 'af_heart', m: 'am_michael' }, 'en-GB': { f: 'bf_emma', m: 'bm_george' } };
-const K = { worker: null, ready: false, loading: false, failed: false, cache: new Map(), ctx: null, src: null, pending: new Map(), nextId: 1, timers: [] };
+const K = { gen: 0, worker: null, ready: false, loading: false, failed: false, cache: new Map(), ctx: null, src: null, pending: new Map(), nextId: 1, timers: [] };
 const KOKORO_WORKER = `
   let tts;
   self.onmessage = async e => {
@@ -1624,11 +1624,14 @@ function kokoroGen(text, speed) {
 function kokoroStop() { K.timers.forEach(clearTimeout); K.timers = []; if (K.src) { try { K.src.stop(); } catch {} K.src = null; } }
 async function kokoroSpeak(text, { rate, onBoundary, onEnd }) {
   const gen = ++K.gen; kokoroStop();
+  K.ctx = K.ctx || new (window.AudioContext || window.webkitAudioContext)();
+  if (K.ctx.state === 'suspended') K.ctx.resume();
+  const slow = setTimeout(() => { if (gen === K.gen) kokoroStatus('✨ Gerando áudio…'); }, 600);
   let data;
   try { data = await kokoroGen(text, Math.min(Math.max(rate, 0.5), 1.5)); }
-  catch (err) { kokoroStatus('Voz natural falhou nesta frase; usando a voz do sistema.'); return nativeSpeak(text, { rate, onBoundary, onEnd }); }
+  catch (err) { clearTimeout(slow); kokoroStatus('Voz natural falhou nesta frase (' + err.message + '); usando a voz do sistema.'); return nativeSpeak(text, { rate, onBoundary, onEnd }); }
+  clearTimeout(slow); if (gen === K.gen) kokoroStatus('');
   if (gen !== K.gen) return;
-  K.ctx = K.ctx || new (window.AudioContext || window.webkitAudioContext)();
   if (K.ctx.state === 'suspended') await K.ctx.resume();
   const buf = K.ctx.createBuffer(1, data.audio.length, data.rate); buf.copyToChannel(data.audio, 0);
   const src = K.ctx.createBufferSource(); src.buffer = buf; src.connect(K.ctx.destination);
@@ -1661,7 +1664,7 @@ function nativeSpeak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
   // Chrome às vezes ignora speak() logo após cancel(); um pequeno atraso evita
   setTimeout(() => synth.speak(u), 30);
 }
-function stopSpeech() { K.gen = (K.gen || 0) + 1; kokoroStop(); if (synth) synth.cancel(); }
+function stopSpeech() { K.gen++; kokoroStop(); if (synth) synth.cancel(); }
 
 /* ============ TABS ============ */
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {

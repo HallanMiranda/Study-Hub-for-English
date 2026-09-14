@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -29,7 +30,7 @@
   button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
   button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
-
+ 
   /* ============ HEADER / TABS ============ */
   header { padding: 20px 20px 0; max-width: 760px; width: 100%; margin: 0 auto; }
   h1 { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; margin: 0 0 14px; letter-spacing: -0.01em; }
@@ -37,10 +38,10 @@
   .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
   .tab { flex: 1; padding: 12px 8px; color: var(--ink-soft); border-bottom: 2px solid transparent; margin-bottom: -1px; font-size: 0.95rem; }
   .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--amber); }
-
+ 
   main { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 20px; }
   section[hidden] { display: none; }
-
+ 
   /* ============ CONTROLS ============ */
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
   .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
@@ -54,7 +55,7 @@
   .speed { display: flex; align-items: center; gap: 10px; color: var(--ink-soft); font-size: 0.9rem; }
   .speed input { accent-color: var(--amber); width: 120px; }
   .hint { color: var(--ink-soft); font-size: 0.85rem; margin: 6px 0 0; }
-
+ 
   /* ============ READER ============ */
   textarea {
     width: 100%; min-height: 240px; resize: vertical;
@@ -64,12 +65,12 @@
   textarea::placeholder { color: var(--ink-soft); }
   .reading { font-family: var(--serif); font-size: 1.15rem; line-height: 1.65; padding: 20px; background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--line); }
   .reading mark { background: rgba(227,176,75,0.28); color: var(--ink); border-radius: 3px; padding: 0 2px; }
-
+ 
   /* ============ FLASHCARD ============ */
   .stats { display: flex; gap: 14px; flex-wrap: wrap; color: var(--ink-soft); font-size: 0.85rem; margin-bottom: 14px; }
   .stats b { color: var(--ink); font-weight: 600; }
   .stats .k { color: var(--teal); } .stats .a { color: var(--amber); } .stats .u { color: var(--rose); }
-
+ 
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px 24px; }
   .level { display: inline-block; font-size: 0.75rem; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); }
   .word { font-family: var(--serif); font-size: clamp(2.4rem, 9vw, 3.4rem); margin: 14px 0 6px; line-height: 1.1; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
@@ -92,7 +93,7 @@
   .tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
   .tools .btn { font-size: 0.85rem; padding: 8px 12px; }
   .sr-only { position: absolute; left: -9999px; }
-
+ 
   /* ============ CONSULTA ============ */
   .search { display: flex; gap: 8px; }
   .search input { flex: 1; min-width: 0; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; font-size: 1.05rem; }
@@ -118,12 +119,25 @@
   .ai-setup select, .ai-setup input { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px 10px; font-size: 0.9rem; }
   .ai-setup input { flex: 1; min-width: 180px; }
   details summary { cursor: pointer; color: var(--ink-soft); font-size: 0.9rem; }
-
+ 
+  .reading .sent { border-radius: 4px; padding: 0 2px; transition: background .2s; }
+  .reading .sent.active { background: rgba(227,176,75,0.09); }
+  .reading .w { cursor: pointer; border-radius: 3px; }
+  .reading .w:hover { background: rgba(255,255,255,0.08); }
+  .reading .w.now { background: rgba(227,176,75,0.35); }
+  .wordcard { margin-top: 12px; padding: 14px 18px; }
+  .wordcard .headword b { font-size: 1.5rem; }
+  .shadow-ok { color: var(--teal); } .shadow-bad { color: var(--rose); text-decoration: underline dotted; }
+  .recent { display: grid; gap: 6px; margin-top: 8px; }
+  .recent button { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px; font-family: var(--serif); }
+  .recent button small { display: block; color: var(--ink-soft); font-family: var(--sans); font-size: 0.75rem; margin-top: 2px; }
+  .btn[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); }
+ 
   footer { text-align: center; color: var(--ink-soft); font-size: 0.75rem; padding: 18px; }
 </style>
 </head>
 <body>
-
+ 
 <header>
   <h1>English <span>Study Hub</span></h1>
   <nav class="tabs" role="tablist">
@@ -132,38 +146,81 @@
     <button class="tab" role="tab" aria-selected="false" data-tab="lookup">Consultar</button>
   </nav>
 </header>
-
+ 
 <main>
   <!-- ========== MÓDULO 1: LEITOR ========== -->
   <section id="reader" role="tabpanel">
-    <textarea id="text" placeholder="Cole aqui um trecho do livro que você está lendo em inglês…" spellcheck="false"></textarea>
+    <textarea id="text" placeholder="Cole aqui um trecho do livro, artigo ou texto em inglês…" spellcheck="false"></textarea>
     <div id="readingView" class="reading" hidden></div>
-
+ 
+    <div id="wordCard" class="block wordcard" hidden>
+      <div class="headword">
+        <b id="wcWord"></b>
+        <button class="flag" data-say="en-US">🇺🇸 ouvir</button>
+        <button class="flag" data-say="en-GB">🇬🇧 ouvir</button>
+        <button class="btn" id="wcAdd" style="margin-left:auto">+ Flashcard</button>
+        <button class="btn ghost" id="wcLookup">Consultar ↗</button>
+        <button class="play" id="wcClose" aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/></svg></button>
+      </div>
+      <p id="wcTrans" class="pt" style="margin:10px 0 0"></p>
+    </div>
+ 
     <div class="row">
       <div class="seg" id="accent" role="group" aria-label="Sotaque">
         <button aria-pressed="true" data-lang="en-US">🇺🇸 Americano</button>
         <button aria-pressed="false" data-lang="en-GB">🇬🇧 Britânico</button>
       </div>
-      <label class="speed">Velocidade <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="0.85"> <span id="rateVal">0.85×</span></label>
+      <label class="speed">Velocidade <input type="range" id="rate" min="0.5" max="1.5" step="0.05" value="0.85"> <span id="rateVal">0.85×</span></label>
+      <div class="seg" id="presets" role="group" aria-label="Velocidade rápida">
+        <button data-rate="0.7">Lento</button>
+        <button data-rate="1">Normal</button>
+        <button data-rate="1.3">Rápido</button>
+      </div>
     </div>
     <div class="row">
       <button class="btn primary" id="listen">▶ Ouvir</button>
       <button class="btn" id="stop" disabled>■ Parar</button>
-      <button class="btn ghost" id="clear">Limpar</button>
+      <button class="btn" id="prevSent" title="Frase anterior">◀ Frase</button>
+      <button class="btn" id="nextSent" title="Próxima frase">Frase ▶</button>
+      <button class="btn" id="repeatSent" title="Repete a frase atual 3 vezes">🔁 Repetir 3×</button>
+      <button class="btn" id="shadow" title="Ouça a frase e repita no microfone">🎤 Minha vez</button>
+      <button class="btn ghost" id="edit">✎ Editar texto</button>
+    </div>
+    <div id="shadowOut" class="block" hidden></div>
+    <div class="row" style="margin-top:6px">
+      <label class="speed">Voz <select id="voiceSel" style="background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;max-width:260px"></select></label>
+      <button class="btn" id="testRate" style="padding:8px 12px;font-size:0.85rem">🔊 Testar velocidade</button>
     </div>
     <p class="hint" id="voiceHint"></p>
+    <p class="hint">Dica: clique em qualquer palavra do texto para ouvir, traduzir ou salvar como flashcard. A leitura salva onde você parou.</p>
+ 
+    <details id="recent">
+      <summary>Últimos textos</summary>
+      <div id="recentList" class="recent"></div>
+    </details>
   </section>
-
+ 
   <!-- ========== MÓDULO 2: FLASHCARDS ========== -->
   <section id="cards" role="tabpanel" hidden>
+    <div class="row" style="margin-top:0">
+      <div class="seg" id="levelSeg" role="group" aria-label="Nível">
+        <button data-level="all">Todas</button>
+        <button data-level="A1">A1</button>
+        <button data-level="A2">A2</button>
+        <button data-level="B1">B1</button>
+        <button data-level="Meu">Minhas</button>
+      </div>
+      <span class="hint" style="margin:0">Hoje: <b id="sToday">0</b>/<input id="goal" type="number" min="5" max="200" step="5" value="20" style="width:52px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px 4px"> cartões</span>
+    </div>
     <div class="stats">
       <span>Revisadas <b id="sTotal">0</b></span>
       <span class="k">Já sabia <b id="sKnown">0</b></span>
       <span class="a">Quase <b id="sAlmost">0</b></span>
       <span class="u">Não sabia <b id="sUnknown">0</b></span>
       <span>Dominadas <b id="sMastered">0</b>/<span id="sDeck">0</span></span>
+      <span>Novas <b id="sNew">0</b></span>
     </div>
-
+ 
     <div class="card" id="card">
       <span class="level" id="cLevel">A1</span>
       <div class="word">
@@ -178,12 +235,12 @@
         </button>
         <span id="cSent">—</span>
       </div>
-
+ 
       <div class="meaning" id="meaning" hidden>
         <p class="t-word" id="cTWord"></p>
         <p class="t-sent" id="cTSent"></p>
       </div>
-
+ 
       <div class="actions" id="revealRow">
         <button class="btn primary" id="reveal">Ver significado</button>
       </div>
@@ -194,7 +251,7 @@
       </div>
       <div class="progress"><i id="bar"></i></div>
     </div>
-
+ 
     <div class="tools">
       <button class="btn" id="shuffle">Embaralhar</button>
       <button class="btn" id="importBtn">Importar deck (JSON)</button>
@@ -211,7 +268,7 @@
       <button class="btn primary" id="lookupBtn">Buscar</button>
     </div>
     <p class="hint">Pode digitar em inglês ou em português: o app detecta o idioma, mostra o termo em inglês, a pronúncia 🇺🇸/🇬🇧, o significado e como usar em frases. Sem chave, usa dicionário e tradução públicos + tabela de diferenças embutida; com a IA opcional, cobre qualquer palavra.</p>
-
+ 
     <details>
       <summary>IA opcional (sua própria chave, gratuita no Gemini)</summary>
       <div class="ai-setup open">
@@ -224,13 +281,13 @@
         <button class="btn" id="aiSave">Salvar</button>
       </div>
     </details>
-
+ 
     <div id="lookupOut" class="lookup"></div>
   </section>
 </main>
-
+ 
 <footer>Roda 100% no navegador. Nada é enviado a servidores.</footer>
-
+ 
 <script>
 /* ==================================================================
    DECK BASE (A1/A2). Adicione mais itens aqui ou importe um JSON.
@@ -409,7 +466,6 @@ const BASE_DECK = [
   ["A2","opportunity","This is a great opportunity.","oportunidade","Esta é uma grande oportunidade."],
   ["A2","environment","We must protect the environment.","meio ambiente, ambiente","Nós devemos proteger o meio ambiente."],
   ["A2","government","The government announced new rules.","governo","O governo anunciou novas regras."],
-  ["A2","although","Although he is rich, he is not happy.","embora","Embora ele seja rico, não é feliz."],
   ["A2","however","It was expensive; however, I bought it.","no entanto, porém","Era caro; no entanto, eu comprei."],
   ["A2","probably","It will probably rain later.","provavelmente","Provavelmente vai chover mais tarde."],
   ["A2","usually","I usually wake up at six.","geralmente, normalmente","Eu geralmente acordo às seis."],
@@ -440,8 +496,1007 @@ const BASE_DECK = [
   ["A2","reason","What is the reason for the delay?","razão, motivo","Qual é o motivo do atraso?"],
   ["A2","result","The results were excellent.","resultado","Os resultados foram excelentes."],
   ["A2","skill","Reading is an important skill.","habilidade","Leitura é uma habilidade importante."],
+  ["A1","I","I am from Brazil.","eu","Eu sou do Brasil."],
+  ["A1","my","This is my phone.","meu, minha","Este é o meu celular."],
+  ["A1","your","Is this your bag?","seu, sua, teu","Esta é a sua bolsa?"],
+  ["A1","his","His car is red.","dele","O carro dele é vermelho."],
+  ["A1","her","I like her dress.","dela; a ela","Eu gosto do vestido dela."],
+  ["A1","our","Our house is small.","nosso, nossa","Nossa casa é pequena."],
+  ["A1","their","Their children are at school.","deles, delas","Os filhos deles estão na escola."],
+  ["A1","me","Can you help me?","me, mim","Você pode me ajudar?"],
+  ["A1","him","I saw him yesterday.","ele, o (objeto)","Eu o vi ontem."],
+  ["A1","us","Come with us.","nós (objeto)","Venha conosco."],
+  ["A1","them","I know them well.","eles, elas (objeto)","Eu os conheço bem."],
+  ["A1","who","Who is that?","quem","Quem é aquele?"],
+  ["A1","what","What is your name?","o que, qual","Qual é o seu nome?"],
+  ["A1","where","Where is the bathroom?","onde","Onde fica o banheiro?"],
+  ["A1","when","When do you wake up?","quando","Quando você acorda?"],
+  ["A1","why","Why are you late?","por que","Por que você está atrasado?"],
+  ["A1","how","How are you?","como","Como você está?"],
+  ["A1","which","Which one do you want?","qual","Qual você quer?"],
+  ["A1","yes","Yes, I can.","sim","Sim, eu posso."],
+  ["A1","no","No, thank you.","não","Não, obrigado."],
+  ["A1","please","Please sit down.","por favor","Por favor, sente-se."],
+  ["A1","thank","Thank you very much.","agradecer","Muito obrigado."],
+  ["A1","sorry","Sorry, I don't understand.","desculpe","Desculpe, eu não entendo."],
+  ["A1","hello","Hello, my name is Ana.","olá","Olá, meu nome é Ana."],
+  ["A1","goodbye","Goodbye, see you soon.","adeus, tchau","Tchau, até logo."],
+  ["A1","one","I have one sister.","um, uma","Eu tenho uma irmã."],
+  ["A1","two","Two coffees, please.","dois, duas","Dois cafés, por favor."],
+  ["A1","three","We have three cats.","três","Nós temos três gatos."],
+  ["A1","four","There are four chairs.","quatro","Há quatro cadeiras."],
+  ["A1","five","The store opens at five.","cinco","A loja abre às cinco."],
+  ["A1","ten","I need ten minutes.","dez","Eu preciso de dez minutos."],
+  ["A1","hundred","This costs a hundred dollars.","cem","Isto custa cem dólares."],
+  ["A1","thousand","A thousand people came.","mil","Mil pessoas vieram."],
+  ["A1","first","This is my first time here.","primeiro","É a minha primeira vez aqui."],
+  ["A1","second","Turn right at the second street.","segundo","Vire à direita na segunda rua."],
+  ["A1","last","This is the last bus.","último","Este é o último ônibus."],
+  ["A1","next","The next train is at nine.","próximo","O próximo trem é às nove."],
+  ["A1","other","Do you have other colors?","outro","Você tem outras cores?"],
+  ["A1","some","I need some sugar.","algum, um pouco de","Eu preciso de um pouco de açúcar."],
+  ["A1","any","Do you have any questions?","algum, qualquer","Você tem alguma pergunta?"],
+  ["A1","many","There are many restaurants here.","muitos","Há muitos restaurantes aqui."],
+  ["A1","much","How much is it?","muito, quanto","Quanto custa?"],
+  ["A1","more","I want more coffee.","mais","Eu quero mais café."],
+  ["A1","all","All my friends are here.","todos, tudo","Todos os meus amigos estão aqui."],
+  ["A1","every","I go to the gym every day.","cada, todo","Eu vou à academia todo dia."],
+  ["A1","each","Each student has a book.","cada","Cada aluno tem um livro."],
+  ["A1","both","Both answers are correct.","ambos","Ambas as respostas estão corretas."],
+  ["A1","few","I have a few questions.","poucos, alguns","Eu tenho algumas perguntas."],
+  ["A1","little","There is a little milk left.","pouco; pequeno","Sobrou um pouco de leite."],
+  ["A1","very","It's very hot today.","muito","Está muito quente hoje."],
+  ["A1","too","It's too expensive.","demais; também","É caro demais."],
+  ["A1","also","I also speak Spanish.","também","Eu também falo espanhol."],
+  ["A1","only","I only have five dollars.","só, somente","Eu só tenho cinco dólares."],
+  ["A1","just","I just arrived.","acabei de; apenas","Eu acabei de chegar."],
+  ["A1","again","Say it again, please.","de novo","Diga de novo, por favor."],
+  ["A1","then","We ate and then we left.","então, depois","Nós comemos e depois saímos."],
+  ["A1","because","I'm tired because I worked a lot.","porque","Estou cansado porque trabalhei muito."],
+  ["A1","so","It was late, so we went home.","então, tão","Estava tarde, então fomos para casa."],
+  ["A1","if","If it rains, we stay home.","se","Se chover, ficamos em casa."],
+  ["A1","or","Tea or coffee?","ou","Chá ou café?"],
+  ["A1","about","This book is about love.","sobre, cerca de","Este livro é sobre amor."],
+  ["A1","after","Call me after lunch.","depois de","Me ligue depois do almoço."],
+  ["A1","before","Wash your hands before eating.","antes de","Lave as mãos antes de comer."],
+  ["A1","under","The cat is under the bed.","embaixo de","O gato está embaixo da cama."],
+  ["A1","over","The plane flew over the city.","sobre, acima de","O avião voou sobre a cidade."],
+  ["A1","near","The hotel is near the beach.","perto de","O hotel fica perto da praia."],
+  ["A1","behind","The park is behind the school.","atrás de","O parque fica atrás da escola."],
+  ["A1","inside","It's warm inside.","dentro","Está quente aqui dentro."],
+  ["A1","outside","The kids are outside.","fora, lá fora","As crianças estão lá fora."],
+  ["A1","up","Go up the stairs.","para cima","Suba as escadas."],
+  ["A1","down","Sit down, please.","para baixo","Sente-se, por favor."],
+  ["A1","out","Let's go out tonight.","fora, para fora","Vamos sair hoje à noite."],
+  ["A1","into","Put the milk into the fridge.","para dentro de","Coloque o leite na geladeira."],
+  ["A1","around","We walked around the city.","ao redor de, por volta de","Nós andamos pela cidade."],
+  ["A1","home","I'm going home.","casa, lar","Estou indo para casa."],
+  ["A1","room","My room is upstairs.","quarto, sala","Meu quarto fica no andar de cima."],
+  ["A1","kitchen","She is in the kitchen.","cozinha","Ela está na cozinha."],
+  ["A1","bathroom","Where is the bathroom?","banheiro","Onde é o banheiro?"],
+  ["A1","bed","I go to bed at eleven.","cama","Eu vou para a cama às onze."],
+  ["A1","door","Please close the door.","porta","Por favor, feche a porta."],
+  ["A1","window","Open the window, it's hot.","janela","Abra a janela, está quente."],
+  ["A1","table","Dinner is on the table.","mesa","O jantar está na mesa."],
+  ["A1","chair","This chair is broken.","cadeira","Esta cadeira está quebrada."],
+  ["A1","phone","My phone is dead.","telefone, celular","Meu celular está sem bateria."],
+  ["A1","computer","I work on my computer all day.","computador","Eu trabalho no computador o dia todo."],
+  ["A1","key","I lost my keys.","chave","Eu perdi minhas chaves."],
+  ["A1","bag","This bag is heavy.","bolsa, sacola","Esta bolsa é pesada."],
+  ["A1","clothes","I need to buy new clothes.","roupas","Eu preciso comprar roupas novas."],
+  ["A1","shirt","He is wearing a blue shirt.","camisa","Ele está usando uma camisa azul."],
+  ["A1","shoes","These shoes are comfortable.","sapatos","Estes sapatos são confortáveis."],
+  ["A1","hat","Wear a hat, it's sunny.","chapéu, boné","Use um chapéu, está ensolarado."],
+  ["A1","head","My head hurts.","cabeça","Minha cabeça dói."],
+  ["A1","eye","She has brown eyes.","olho","Ela tem olhos castanhos."],
+  ["A1","face","Wash your face.","rosto","Lave o rosto."],
+  ["A1","mouth","Open your mouth.","boca","Abra a boca."],
+  ["A1","foot","My foot hurts.","pé","Meu pé dói."],
+  ["A1","leg","He broke his leg.","perna","Ele quebrou a perna."],
+  ["A1","arm","She has a tattoo on her arm.","braço","Ela tem uma tatuagem no braço."],
+  ["A1","heart","My heart is beating fast.","coração","Meu coração está batendo rápido."],
+  ["A1","hair","She has long hair.","cabelo","Ela tem cabelo comprido."],
+  ["A1","body","Exercise is good for the body.","corpo","Exercício faz bem para o corpo."],
+  ["A1","mother","My mother is a teacher.","mãe","Minha mãe é professora."],
+  ["A1","father","My father likes fishing.","pai","Meu pai gosta de pescar."],
+  ["A1","parents","My parents live in Rio.","pais","Meus pais moram no Rio."],
+  ["A1","brother","I have an older brother.","irmão","Eu tenho um irmão mais velho."],
+  ["A1","sister","My sister is a nurse.","irmã","Minha irmã é enfermeira."],
+  ["A1","son","Their son is ten years old.","filho","O filho deles tem dez anos."],
+  ["A1","daughter","Our daughter loves music.","filha","Nossa filha ama música."],
+  ["A1","husband","Her husband is a doctor.","marido","O marido dela é médico."],
+  ["A1","wife","My wife is from Argentina.","esposa","Minha esposa é da Argentina."],
+  ["A1","baby","The baby is sleeping.","bebê","O bebê está dormindo."],
+  ["A1","boy","That boy is my cousin.","menino","Aquele menino é meu primo."],
+  ["A1","girl","The girl is reading.","menina","A menina está lendo."],
+  ["A1","dog","My dog loves to run.","cachorro","Meu cachorro adora correr."],
+  ["A1","cat","The cat is on the sofa.","gato","O gato está no sofá."],
+  ["A1","animal","Elephants are big animals.","animal","Elefantes são animais grandes."],
+  ["A1","bird","A bird is singing outside.","pássaro","Um pássaro está cantando lá fora."],
+  ["A1","fish","I like grilled fish.","peixe","Eu gosto de peixe grelhado."],
+  ["A1","tree","There's a big tree in the garden.","árvore","Há uma árvore grande no jardim."],
+  ["A1","flower","She gave me flowers.","flor","Ela me deu flores."],
+  ["A1","sun","The sun is very strong today.","sol","O sol está muito forte hoje."],
+  ["A1","rain","I love the sound of rain.","chuva; chover","Eu amo o som da chuva."],
+  ["A1","sky","The sky is blue.","céu","O céu está azul."],
+  ["A1","sea","We swam in the sea.","mar","Nós nadamos no mar."],
+  ["A1","beach","Let's go to the beach.","praia","Vamos à praia."],
+  ["A1","mountain","I love the mountains.","montanha","Eu amo as montanhas."],
+  ["A1","river","The river is very long.","rio","O rio é muito longo."],
+  ["A1","country","Brazil is a big country.","país; campo","O Brasil é um país grande."],
+  ["A1","street","I live on this street.","rua","Eu moro nesta rua."],
+  ["A1","road","The road is closed.","estrada","A estrada está fechada."],
+  ["A1","shop","The shop closes at eight.","loja","A loja fecha às oito."],
+  ["A1","market","We buy fruit at the market.","mercado, feira","Nós compramos frutas na feira."],
+  ["A1","restaurant","This restaurant is great.","restaurante","Este restaurante é ótimo."],
+  ["A1","hotel","Our hotel is near the station.","hotel","Nosso hotel fica perto da estação."],
+  ["A1","hospital","She works at the hospital.","hospital","Ela trabalha no hospital."],
+  ["A1","bank","The bank opens at ten.","banco","O banco abre às dez."],
+  ["A1","office","I'm at the office now.","escritório","Estou no escritório agora."],
+  ["A1","bus","I take the bus to work.","ônibus","Eu pego ônibus para o trabalho."],
+  ["A1","train","The train is late.","trem","O trem está atrasado."],
+  ["A1","plane","The plane leaves at noon.","avião","O avião sai ao meio-dia."],
+  ["A1","bike","I ride my bike on weekends.","bicicleta","Eu ando de bicicleta nos fins de semana."],
+  ["A1","ticket","I bought two tickets.","ingresso, passagem","Eu comprei dois ingressos."],
+  ["A1","trip","Have a nice trip!","viagem","Boa viagem!"],
+  ["A1","map","Do you have a map?","mapa","Você tem um mapa?"],
+  ["A1","bread","We need bread for breakfast.","pão","Precisamos de pão para o café da manhã."],
+  ["A1","milk","I drink milk every morning.","leite","Eu bebo leite toda manhã."],
+  ["A1","egg","I eat two eggs a day.","ovo","Eu como dois ovos por dia."],
+  ["A1","meat","I don't eat meat.","carne","Eu não como carne."],
+  ["A1","chicken","Chicken with rice, please.","frango","Frango com arroz, por favor."],
+  ["A1","rice","Rice and beans is a typical dish.","arroz","Arroz com feijão é um prato típico."],
+  ["A1","fruit","Eat more fruit.","fruta","Coma mais frutas."],
+  ["A1","apple","An apple a day keeps the doctor away.","maçã","Uma maçã por dia mantém o médico longe."],
+  ["A1","coffee","I need a coffee.","café","Eu preciso de um café."],
+  ["A1","tea","Would you like some tea?","chá","Você gostaria de um chá?"],
+  ["A1","juice","Orange juice, please.","suco","Suco de laranja, por favor."],
+  ["A1","sugar","No sugar, thanks.","açúcar","Sem açúcar, obrigado."],
+  ["A1","salt","Pass me the salt.","sal","Me passe o sal."],
+  ["A1","breakfast","Breakfast is at seven.","café da manhã","O café da manhã é às sete."],
+  ["A1","lunch","Let's have lunch together.","almoço","Vamos almoçar juntos."],
+  ["A1","dinner","Dinner is ready.","jantar","O jantar está pronto."],
+  ["A1","cook","I cook every night.","cozinhar","Eu cozinho toda noite."],
+  ["A1","hungry","I'm hungry.","com fome","Estou com fome."],
+  ["A1","thirsty","Are you thirsty?","com sede","Você está com sede?"],
+  ["A1","red","I like the red one.","vermelho","Eu gosto do vermelho."],
+  ["A1","blue","The sky is blue.","azul","O céu está azul."],
+  ["A1","green","The light is green.","verde","O sinal está verde."],
+  ["A1","yellow","Bananas are yellow.","amarelo","Bananas são amarelas."],
+  ["A1","black","She has black hair.","preto","Ela tem cabelo preto."],
+  ["A1","white","The walls are white.","branco","As paredes são brancas."],
+  ["A1","color","What's your favorite color?","cor","Qual é a sua cor favorita?"],
+  ["A1","Monday","I start work on Monday.","segunda-feira","Eu começo a trabalhar na segunda."],
+  ["A1","Friday","See you on Friday!","sexta-feira","Vejo você na sexta!"],
+  ["A1","Sunday","We rest on Sunday.","domingo","Nós descansamos no domingo."],
+  ["A1","weekend","What are your plans for the weekend?","fim de semana","Quais são seus planos para o fim de semana?"],
+  ["A1","month","I get paid every month.","mês","Eu recebo todo mês."],
+  ["A1","hour","The class lasts one hour.","hora","A aula dura uma hora."],
+  ["A1","minute","Wait a minute.","minuto","Espere um minuto."],
+  ["A1","afternoon","See you this afternoon.","tarde","Vejo você hoje à tarde."],
+  ["A1","evening","Good evening!","noite (início)","Boa noite!"],
+  ["A1","yesterday","I was sick yesterday.","ontem","Eu estava doente ontem."],
+  ["A1","soon","I'll be there soon.","logo, em breve","Estarei lá em breve."],
+  ["A1","often","How often do you exercise?","frequentemente","Com que frequência você se exercita?"],
+  ["A1","sometimes","I sometimes work at night.","às vezes","Às vezes eu trabalho à noite."],
+  ["A1","name","My name is Paulo.","nome","Meu nome é Paulo."],
+  ["A1","age","What is your age?","idade","Qual é a sua idade?"],
+  ["A1","number","What's your phone number?","número","Qual é o seu número de telefone?"],
+  ["A1","word","What does this word mean?","palavra","O que esta palavra significa?"],
+  ["A1","question","I have a question.","pergunta","Eu tenho uma pergunta."],
+  ["A1","answer","I don't know the answer.","resposta; responder","Eu não sei a resposta."],
+  ["A1","thing","What is this thing?","coisa","O que é esta coisa?"],
+  ["A1","problem","No problem!","problema","Sem problema!"],
+  ["A1","idea","That's a great idea!","ideia","Essa é uma ótima ideia!"],
+  ["A1","story","Tell me a story.","história","Me conte uma história."],
+  ["A1","music","I listen to music every day.","música","Eu ouço música todos os dias."],
+  ["A1","song","I love this song.","canção, música","Eu amo esta música."],
+  ["A1","movie","Let's watch a movie.","filme","Vamos assistir a um filme."],
+  ["A1","game","The game starts at eight.","jogo","O jogo começa às oito."],
+  ["A1","picture","Take a picture of me.","foto, imagem","Tire uma foto minha."],
+  ["A1","party","The party is on Saturday.","festa","A festa é no sábado."],
+  ["A1","gift","This gift is for you.","presente","Este presente é para você."],
+  ["A1","price","The price is too high.","preço","O preço está alto demais."],
+  ["A1","free","The museum is free on Sundays.","grátis; livre","O museu é grátis aos domingos."],
+  ["A1","cheap","This restaurant is cheap.","barato","Este restaurante é barato."],
+  ["A1","expensive","The hotel is very expensive.","caro","O hotel é muito caro."],
+  ["A1","beautiful","What a beautiful day!","bonito, lindo","Que dia lindo!"],
+  ["A1","nice","Nice to see you.","legal, agradável","É bom ver você."],
+  ["A1","bad","The weather is bad today.","ruim, mau","O tempo está ruim hoje."],
+  ["A1","right","You are right.","certo; direita","Você está certo."],
+  ["A1","wrong","That answer is wrong.","errado","Essa resposta está errada."],
+  ["A1","long","It's a long way.","longo, comprido","É um longo caminho."],
+  ["A1","short","She has short hair.","curto, baixo","Ela tem cabelo curto."],
+  ["A1","tall","My brother is very tall.","alto","Meu irmão é muito alto."],
+  ["A1","fast","This car is fast.","rápido","Este carro é rápido."],
+  ["A1","slow","The internet is slow today.","lento","A internet está lenta hoje."],
+  ["A1","clean","The room is clean.","limpo; limpar","O quarto está limpo."],
+  ["A1","dirty","My shoes are dirty.","sujo","Meus sapatos estão sujos."],
+  ["A1","full","The bus is full.","cheio","O ônibus está cheio."],
+  ["A1","empty","The glass is empty.","vazio","O copo está vazio."],
+  ["A1","ready","Are you ready?","pronto","Você está pronto?"],
+  ["A1","busy","I'm busy right now.","ocupado","Estou ocupado agora."],
+  ["A1","sick","I feel sick.","doente","Eu me sinto doente."],
+  ["A1","fine","I'm fine, thanks.","bem","Estou bem, obrigado."],
+  ["A1","great","That's great news!","ótimo","Essa é uma ótima notícia!"],
+  ["A1","favorite","Pizza is my favorite food.","favorito","Pizza é minha comida favorita."],
+  ["A1","different","We are very different.","diferente","Nós somos muito diferentes."],
+  ["A1","same","We have the same shoes.","mesmo, igual","Nós temos os mesmos sapatos."],
+  ["A1","important","This meeting is important.","importante","Esta reunião é importante."],
+  ["A1","sure","Are you sure?","certo, seguro","Você tem certeza?"],
+  ["A1","like","I like your jacket.","gostar; como","Eu gosto da sua jaqueta."],
+  ["A1","love","I love my family.","amar; amor","Eu amo minha família."],
+  ["A1","hate","I hate waiting.","odiar","Eu odeio esperar."],
+  ["A1","hope","I hope you feel better.","esperar (esperança)","Espero que você melhore."],
+  ["A1","enjoy","Enjoy your meal!","aproveitar, curtir","Bom apetite!"],
+  ["A1","laugh","She laughed at my joke.","rir","Ela riu da minha piada."],
+  ["A1","cry","The baby is crying.","chorar","O bebê está chorando."],
+  ["A1","smile","He smiled at me.","sorrir; sorriso","Ele sorriu para mim."],
+  ["A1","dance","Let's dance!","dançar","Vamos dançar!"],
+  ["A1","sing","She sings very well.","cantar","Ela canta muito bem."],
+  ["A1","swim","I can't swim.","nadar","Eu não sei nadar."],
+  ["A1","drive","I drive to work.","dirigir","Eu vou dirigindo para o trabalho."],
+  ["A1","fly","We fly to London tomorrow.","voar","Nós voamos para Londres amanhã."],
+  ["A1","travel","I love to travel.","viajar","Eu amo viajar."],
+  ["A1","visit","Let's visit my grandmother.","visitar","Vamos visitar minha avó."],
+  ["A1","arrive","What time do you arrive?","chegar","Que horas você chega?"],
+  ["A1","wake","I wake up at six.","acordar","Eu acordo às seis."],
+  ["A1","wash","Wash the dishes, please.","lavar","Lave a louça, por favor."],
+  ["A1","wear","What are you wearing tonight?","vestir, usar","O que você vai vestir hoje à noite?"],
+  ["A1","close","Close the window.","fechar; perto","Feche a janela."],
+  ["A1","push","Push the door.","empurrar","Empurre a porta."],
+  ["A1","pull","Pull, don't push.","puxar","Puxe, não empurre."],
+  ["A1","hold","Hold my hand.","segurar","Segure minha mão."],
+  ["A1","throw","Throw me the ball.","jogar, arremessar","Jogue a bola para mim."],
+  ["A1","catch","Catch the ball!","pegar, capturar","Pegue a bola!"],
+  ["A1","study","I study English at night.","estudar","Eu estudo inglês à noite."],
+  ["A1","teach","She teaches math.","ensinar","Ela ensina matemática."],
+  ["A1","practice","Practice every day.","praticar","Pratique todos os dias."],
+  ["A1","listen","Listen to me.","escutar, ouvir","Me escute."],
+  ["A1","count","Count to ten.","contar (números)","Conte até dez."],
+  ["A1","draw","My son loves to draw.","desenhar","Meu filho adora desenhar."],
+  ["A1","wish","I wish you a happy birthday.","desejar","Desejo a você um feliz aniversário."],
+  ["A1","can","Can you swim?","poder, conseguir","Você sabe nadar?"],
+  ["A1","will","I will call you tomorrow.","(futuro) vou, irei","Eu vou ligar para você amanhã."],
+  ["A1","would","Would you like some water?","(condicional) gostaria","Você gostaria de água?"],
+  ["A1","should","You should rest.","deveria","Você deveria descansar."],
+  ["A1","must","You must wear a seatbelt.","dever, precisar","Você deve usar cinto de segurança."],
+  ["A1","may","May I come in?","poder (permissão)","Posso entrar?"],
+  ["A1","could","Could you repeat that?","poderia","Você poderia repetir?"],
+  ["A2","agree","I agree with you.","concordar","Eu concordo com você."],
+  ["A2","arrange","Let's arrange a meeting.","organizar, combinar","Vamos marcar uma reunião."],
+  ["A2","attend","I attend a class on Mondays.","frequentar, comparecer","Eu frequento uma aula às segundas."],
+  ["A2","belong","This bag belongs to me.","pertencer","Esta bolsa pertence a mim."],
+  ["A2","borrow","Can I borrow your pen?","pegar emprestado","Posso pegar sua caneta emprestada?"],
+  ["A2","lend","Can you lend me some money?","emprestar","Você pode me emprestar dinheiro?"],
+  ["A2","break","Don't break the glass.","quebrar; pausa","Não quebre o copo."],
+  ["A2","cancel","They cancelled the flight.","cancelar","Eles cancelaram o voo."],
+  ["A2","celebrate","We celebrated her birthday.","comemorar","Nós comemoramos o aniversário dela."],
+  ["A2","check","Check your email.","verificar, checar","Verifique seu e-mail."],
+  ["A2","collect","I collect old coins.","colecionar, recolher","Eu coleciono moedas antigas."],
+  ["A2","complain","He complained about the noise.","reclamar","Ele reclamou do barulho."],
+  ["A2","complete","Complete the form, please.","completar; completo","Preencha o formulário, por favor."],
+  ["A2","cost","How much does it cost?","custar; custo","Quanto custa?"],
+  ["A2","cover","Cover the pan.","cobrir; capa","Tampe a panela."],
+  ["A2","deliver","They deliver in 30 minutes.","entregar","Eles entregam em 30 minutos."],
+  ["A2","depend","It depends on the weather.","depender","Depende do tempo."],
+  ["A2","discuss","Let's discuss the plan.","discutir, conversar sobre","Vamos discutir o plano."],
+  ["A2","earn","How much do you earn?","ganhar (dinheiro)","Quanto você ganha?"],
+  ["A2","enter","Enter your password.","entrar, inserir","Digite sua senha."],
+  ["A2","exercise","I exercise three times a week.","exercitar-se; exercício","Eu me exercito três vezes por semana."],
+  ["A2","fail","I failed the exam.","falhar, reprovar","Eu fui reprovado na prova."],
+  ["A2","pass","She passed the test.","passar, ser aprovado","Ela passou no teste."],
+  ["A2","fill","Fill the bottle with water.","encher, preencher","Encha a garrafa com água."],
+  ["A2","finish","I finish work at six.","terminar","Eu termino o trabalho às seis."],
+  ["A2","fit","These jeans don't fit me.","caber, servir","Esta calça não serve em mim."],
+  ["A2","fix","Can you fix my phone?","consertar","Você pode consertar meu celular?"],
+  ["A2","guess","Guess what happened!","adivinhar","Adivinha o que aconteceu!"],
+  ["A2","hurry","Hurry up, we're late!","apressar-se","Rápido, estamos atrasados!"],
+  ["A2","hurt","My back hurts.","doer, machucar","Minhas costas doem."],
+  ["A2","imagine","Imagine living on the beach.","imaginar","Imagine morar na praia."],
+  ["A2","introduce","Let me introduce my friend.","apresentar","Deixe-me apresentar meu amigo."],
+  ["A2","invite","They invited us to dinner.","convidar","Eles nos convidaram para jantar."],
+  ["A2","join","Join us for lunch.","juntar-se, participar","Junte-se a nós para o almoço."],
+  ["A2","jump","The dog jumped over the fence.","pular","O cachorro pulou a cerca."],
+  ["A2","kick","He kicked the ball.","chutar","Ele chutou a bola."],
+  ["A2","kill","Smoking kills.","matar","Fumar mata."],
+  ["A2","lie","Don't lie to me.","mentir; deitar","Não minta para mim."],
+  ["A2","lift","Can you lift this box?","levantar, erguer","Você consegue levantar esta caixa?"],
+  ["A2","manage","I can manage it alone.","conseguir, gerenciar","Eu consigo fazer isso sozinho."],
+  ["A2","mark","Mark the correct answer.","marcar; nota","Marque a resposta correta."],
+  ["A2","matter","It doesn't matter.","importar; assunto","Não importa."],
+  ["A2","mention","She didn't mention the price.","mencionar","Ela não mencionou o preço."],
+  ["A2","miss","I miss my family.","sentir falta; perder","Eu sinto falta da minha família."],
+  ["A2","notice","Did you notice her new haircut?","notar, perceber","Você notou o corte de cabelo novo dela?"],
+  ["A2","order","I'd like to order a pizza.","pedir; ordem","Eu gostaria de pedir uma pizza."],
+  ["A2","own","I own a small car.","possuir; próprio","Eu tenho um carro pequeno."],
+  ["A2","pack","Pack your bags.","fazer as malas","Arrume as malas."],
+  ["A2","paint","We painted the wall blue.","pintar; tinta","Nós pintamos a parede de azul."],
+  ["A2","park","Where can I park?","estacionar; parque","Onde posso estacionar?"],
+  ["A2","pick","Pick a card.","escolher, pegar","Escolha uma carta."],
+  ["A2","plan","What's the plan for tonight?","plano; planejar","Qual é o plano para hoje à noite?"],
+  ["A2","post","I posted a photo.","postar; correio","Eu postei uma foto."],
+  ["A2","promise","I promise I'll be there.","prometer","Eu prometo que estarei lá."],
+  ["A2","reach","We reached the top.","alcançar, chegar a","Nós chegamos ao topo."],
+  ["A2","recommend","I recommend this restaurant.","recomendar","Eu recomendo este restaurante."],
+  ["A2","relax","Relax, everything is fine.","relaxar","Relaxe, está tudo bem."],
+  ["A2","rent","We rent an apartment downtown.","alugar; aluguel","Nós alugamos um apartamento no centro."],
+  ["A2","repair","The car needs repairs.","consertar; conserto","O carro precisa de consertos."],
+  ["A2","repeat","Could you repeat that?","repetir","Você poderia repetir?"],
+  ["A2","reply","I'll reply to your email later.","responder; resposta","Vou responder seu e-mail mais tarde."],
+  ["A2","ring","The phone is ringing.","tocar; anel","O telefone está tocando."],
+  ["A2","save","I'm saving money for a trip.","economizar, salvar","Estou economizando para uma viagem."],
+  ["A2","search","I searched for my keys everywhere.","procurar; busca","Procurei minhas chaves por toda parte."],
+  ["A2","sell","They sell fresh bread.","vender","Eles vendem pão fresco."],
+  ["A2","serve","Dinner is served.","servir","O jantar está servido."],
+  ["A2","share","Let's share a pizza.","compartilhar, dividir","Vamos dividir uma pizza."],
+  ["A2","shout","Don't shout at me.","gritar","Não grite comigo."],
+  ["A2","sign","Sign here, please.","assinar; sinal, placa","Assine aqui, por favor."],
+  ["A2","smell","This flower smells great.","cheirar; cheiro","Esta flor tem um cheiro ótimo."],
+  ["A2","taste","Taste this soup.","provar; sabor","Prove esta sopa."],
+  ["A2","touch","Don't touch that.","tocar (com a mão)","Não toque nisso."],
+  ["A2","spell","How do you spell your name?","soletrar","Como se soletra o seu nome?"],
+  ["A2","steal","Someone stole my bike.","roubar","Alguém roubou minha bicicleta."],
+  ["A2","succeed","She succeeded in her career.","ter sucesso","Ela teve sucesso na carreira."],
+  ["A2","translate","Can you translate this?","traduzir","Você pode traduzir isto?"],
+  ["A2","waste","Don't waste your time.","desperdiçar; lixo","Não desperdice seu tempo."],
+  ["A2","worry","Don't worry about it.","preocupar-se","Não se preocupe com isso."],
+  ["A2","boss","My boss is very friendly.","chefe","Meu chefe é muito simpático."],
+  ["A2","colleague","I have lunch with my colleagues.","colega de trabalho","Eu almoço com meus colegas."],
+  ["A2","company","She works for a big company.","empresa; companhia","Ela trabalha para uma empresa grande."],
+  ["A2","customer","The customer is always right.","cliente","O cliente tem sempre razão."],
+  ["A2","meeting","The meeting starts at ten.","reunião","A reunião começa às dez."],
+  ["A2","interview","I have a job interview tomorrow.","entrevista","Eu tenho uma entrevista de emprego amanhã."],
+  ["A2","salary","The salary is good.","salário","O salário é bom."],
+  ["A2","career","She has a great career.","carreira","Ela tem uma carreira ótima."],
+  ["A2","project","We finished the project on time.","projeto","Terminamos o projeto no prazo."],
+  ["A2","report","Send me the report by Friday.","relatório; relatar","Me envie o relatório até sexta."],
+  ["A2","email","I'll send you an email.","e-mail","Vou te mandar um e-mail."],
+  ["A2","message","Leave a message.","mensagem","Deixe uma mensagem."],
+  ["A2","document","Print this document.","documento","Imprima este documento."],
+  ["A2","form","Fill in the form.","formulário; forma","Preencha o formulário."],
+  ["A2","list","Make a shopping list.","lista","Faça uma lista de compras."],
+  ["A2","note","Take notes during the class.","nota, anotação","Faça anotações durante a aula."],
+  ["A2","page","Open your book to page ten.","página","Abra o livro na página dez."],
+  ["A2","screen","My screen is broken.","tela","Minha tela está quebrada."],
+  ["A2","password","I forgot my password.","senha","Eu esqueci minha senha."],
+  ["A2","website","Visit our website.","site","Visite nosso site."],
+  ["A2","internet","The internet is down.","internet","A internet caiu."],
+  ["A2","app","Download the app.","aplicativo","Baixe o aplicativo."],
+  ["A2","battery","My battery is low.","bateria","Minha bateria está fraca."],
+  ["A2","camera","This camera takes great photos.","câmera","Esta câmera tira fotos ótimas."],
+  ["A2","news","Did you see the news?","notícias","Você viu as notícias?"],
+  ["A2","newspaper","He reads the newspaper every morning.","jornal","Ele lê o jornal toda manhã."],
+  ["A2","magazine","I bought a magazine.","revista","Eu comprei uma revista."],
+  ["A2","radio","Turn on the radio.","rádio","Ligue o rádio."],
+  ["A2","television","We watch television at night.","televisão","Nós assistimos televisão à noite."],
+  ["A2","doctor","I need to see a doctor.","médico","Eu preciso ver um médico."],
+  ["A2","nurse","The nurse was very kind.","enfermeiro(a)","A enfermeira foi muito gentil."],
+  ["A2","medicine","Take this medicine twice a day.","remédio, medicina","Tome este remédio duas vezes ao dia."],
+  ["A2","pain","I have a pain in my back.","dor","Eu tenho uma dor nas costas."],
+  ["A2","headache","I have a headache.","dor de cabeça","Estou com dor de cabeça."],
+  ["A2","fever","She has a fever.","febre","Ela está com febre."],
+  ["A2","accident","There was an accident on the road.","acidente","Houve um acidente na estrada."],
+  ["A2","police","Call the police!","polícia","Chame a polícia!"],
+  ["A2","fire","There's a fire in the building.","fogo, incêndio","Há um incêndio no prédio."],
+  ["A2","emergency","This is an emergency.","emergência","Isto é uma emergência."],
+  ["A2","safe","Keep your money in a safe place.","seguro; cofre","Guarde seu dinheiro em um lugar seguro."],
+  ["A2","danger","Danger! Do not enter.","perigo","Perigo! Não entre."],
+  ["A2","airport","The airport is far from the city.","aeroporto","O aeroporto é longe da cidade."],
+  ["A2","station","Meet me at the train station.","estação","Me encontre na estação de trem."],
+  ["A2","flight","My flight was delayed.","voo","Meu voo atrasou."],
+  ["A2","passport","Don't forget your passport.","passaporte","Não esqueça seu passaporte."],
+  ["A2","luggage","Where is my luggage?","bagagem","Onde está minha bagagem?"],
+  ["A2","suitcase","My suitcase is heavy.","mala","Minha mala está pesada."],
+  ["A2","tourist","The city is full of tourists.","turista","A cidade está cheia de turistas."],
+  ["A2","guide","We hired a tour guide.","guia","Contratamos um guia turístico."],
+  ["A2","museum","The museum opens at nine.","museu","O museu abre às nove."],
+  ["A2","church","The church is very old.","igreja","A igreja é muito antiga."],
+  ["A2","bridge","Cross the bridge.","ponte","Atravesse a ponte."],
+  ["A2","corner","The café is on the corner.","esquina, canto","O café fica na esquina."],
+  ["A2","direction","Which direction is the beach?","direção","Em que direção fica a praia?"],
+  ["A2","distance","What's the distance to the airport?","distância","Qual é a distância até o aeroporto?"],
+  ["A2","address","What's your address?","endereço","Qual é o seu endereço?"],
+  ["A2","floor","My office is on the third floor.","andar, chão","Meu escritório fica no terceiro andar."],
+  ["A2","building","This building has twenty floors.","prédio","Este prédio tem vinte andares."],
+  ["A2","apartment","We live in a small apartment.","apartamento","Nós moramos em um apartamento pequeno."],
+  ["A2","garden","The kids are playing in the garden.","jardim","As crianças estão brincando no jardim."],
+  ["A2","garage","The car is in the garage.","garagem","O carro está na garagem."],
+  ["A2","furniture","We need new furniture.","móveis","Precisamos de móveis novos."],
+  ["A2","sofa","The cat sleeps on the sofa.","sofá","O gato dorme no sofá."],
+  ["A2","fridge","The milk is in the fridge.","geladeira","O leite está na geladeira."],
+  ["A2","shower","I take a shower every morning.","chuveiro, banho","Eu tomo banho toda manhã."],
+  ["A2","towel","Bring me a towel.","toalha","Me traga uma toalha."],
+  ["A2","soap","We're out of soap.","sabão, sabonete","Acabou o sabonete."],
+  ["A2","bottle","A bottle of water, please.","garrafa","Uma garrafa de água, por favor."],
+  ["A2","glass","Can I have a glass of wine?","copo, vidro","Posso tomar uma taça de vinho?"],
+  ["A2","plate","Put the food on the plate.","prato","Coloque a comida no prato."],
+  ["A2","knife","Be careful with the knife.","faca","Cuidado com a faca."],
+  ["A2","fork","I need a fork.","garfo","Eu preciso de um garfo."],
+  ["A2","spoon","Use a spoon for the soup.","colher","Use uma colher para a sopa."],
+  ["A2","cup","A cup of coffee, please.","xícara","Uma xícara de café, por favor."],
+  ["A2","menu","Can I see the menu?","cardápio","Posso ver o cardápio?"],
+  ["A2","waiter","The waiter was very friendly.","garçom","O garçom foi muito simpático."],
+  ["A2","tip","Leave a tip for the waiter.","gorjeta; dica","Deixe uma gorjeta para o garçom."],
+  ["A2","dessert","What's for dessert?","sobremesa","O que tem de sobremesa?"],
+  ["A2","cheese","I love cheese.","queijo","Eu amo queijo."],
+  ["A2","butter","Bread with butter, please.","manteiga","Pão com manteiga, por favor."],
+  ["A2","vegetable","Eat your vegetables.","legume, verdura","Coma seus legumes."],
+  ["A2","potato","Fried potatoes are delicious.","batata","Batatas fritas são deliciosas."],
+  ["A2","tomato","Add two tomatoes.","tomate","Adicione dois tomates."],
+  ["A2","onion","Cut the onion.","cebola","Corte a cebola."],
+  ["A2","banana","I eat a banana every morning.","banana","Eu como uma banana toda manhã."],
+  ["A2","orange","Orange juice is my favorite.","laranja","Suco de laranja é o meu favorito."],
+  ["A2","soup","The soup is hot.","sopa","A sopa está quente."],
+  ["A2","salad","I'll have a salad.","salada","Eu vou querer uma salada."],
+  ["A2","sandwich","I made a sandwich.","sanduíche","Eu fiz um sanduíche."],
+  ["A2","cake","She baked a chocolate cake.","bolo","Ela assou um bolo de chocolate."],
+  ["A2","chocolate","Chocolate makes me happy.","chocolate","Chocolate me deixa feliz."],
+  ["A2","beer","Two beers, please.","cerveja","Duas cervejas, por favor."],
+  ["A2","wine","Red or white wine?","vinho","Vinho tinto ou branco?"],
+  ["A2","delicious","This cake is delicious!","delicioso","Este bolo está delicioso!"],
+  ["A2","fresh","I like fresh fruit.","fresco","Eu gosto de fruta fresca."],
+  ["A2","sweet","This coffee is too sweet.","doce","Este café está doce demais."],
+  ["A2","spicy","Is this dish spicy?","apimentado","Este prato é apimentado?"],
+  ["A2","jacket","Take a jacket, it's cold.","jaqueta, casaco","Leve uma jaqueta, está frio."],
+  ["A2","coat","I need a winter coat.","casaco","Eu preciso de um casaco de inverno."],
+  ["A2","dress","She wore a red dress.","vestido; vestir-se","Ela usou um vestido vermelho."],
+  ["A2","skirt","This skirt is too short.","saia","Esta saia é curta demais."],
+  ["A2","jeans","I wear jeans every day.","calça jeans","Eu uso jeans todo dia."],
+  ["A2","socks","Where are my socks?","meias","Onde estão minhas meias?"],
+  ["A2","boots","These boots are warm.","botas","Estas botas são quentes."],
+  ["A2","glasses","I can't read without my glasses.","óculos","Não consigo ler sem meus óculos."],
+  ["A2","umbrella","Take an umbrella.","guarda-chuva","Leve um guarda-chuva."],
+  ["A2","wallet","I lost my wallet.","carteira","Eu perdi minha carteira."],
+  ["A2","size","What size are you?","tamanho","Qual é o seu tamanho?"],
+  ["A2","discount","Is there a discount?","desconto","Tem desconto?"],
+  ["A2","receipt","Keep the receipt.","recibo, nota fiscal","Guarde o recibo."],
+  ["A2","cash","I'll pay in cash.","dinheiro vivo","Vou pagar em dinheiro."],
+  ["A2","card","Can I pay by card?","cartão","Posso pagar com cartão?"],
+  ["A2","coin","I found a coin.","moeda","Eu achei uma moeda."],
+  ["A2","spring","Flowers grow in spring.","primavera","As flores crescem na primavera."],
+  ["A2","summer","We go to the beach in summer.","verão","Nós vamos à praia no verão."],
+  ["A2","winter","Winter is cold here.","inverno","O inverno é frio aqui."],
+  ["A2","snow","It never snows here.","neve; nevar","Nunca neva aqui."],
+  ["A2","wind","The wind is strong today.","vento","O vento está forte hoje."],
+  ["A2","cloud","There are no clouds in the sky.","nuvem","Não há nuvens no céu."],
+  ["A2","storm","A storm is coming.","tempestade","Uma tempestade está chegando."],
+  ["A2","sunny","It's a sunny day.","ensolarado","É um dia ensolarado."],
+  ["A2","warm","The water is warm.","morno, quente (agradável)","A água está morna."],
+  ["A2","dry","The clothes are dry.","seco; secar","As roupas estão secas."],
+  ["A2","wet","My hair is wet.","molhado","Meu cabelo está molhado."],
+  ["A2","dark","It gets dark at six.","escuro","Escurece às seis."],
+  ["A2","bright","The room is bright.","claro, brilhante","O quarto é claro."],
+  ["A2","quiet","Please be quiet.","quieto, silencioso","Por favor, fique quieto."],
+  ["A2","loud","The music is too loud.","alto (som)","A música está alta demais."],
+  ["A2","strong","Coffee makes me feel strong.","forte","O café me faz sentir forte."],
+  ["A2","weak","I feel weak today.","fraco","Eu me sinto fraco hoje."],
+  ["A2","heavy","This box is heavy.","pesado","Esta caixa é pesada."],
+  ["A2","light","This bag is light.","leve; luz","Esta bolsa é leve."],
+  ["A2","soft","The pillow is soft.","macio","O travesseiro é macio."],
+  ["A2","thick","The book is very thick.","grosso","O livro é muito grosso."],
+  ["A2","thin","He is tall and thin.","magro, fino","Ele é alto e magro."],
+  ["A2","wide","The street is wide.","largo","A rua é larga."],
+  ["A2","narrow","The road is narrow.","estreito","A estrada é estreita."],
+  ["A2","deep","The lake is deep.","profundo","O lago é profundo."],
+  ["A2","flat","The ground is flat.","plano; apartamento (UK)","O chão é plano."],
+  ["A2","round","The table is round.","redondo","A mesa é redonda."],
+  ["A2","square","The main square is beautiful.","praça; quadrado","A praça principal é linda."],
+  ["A2","modern","I like modern art.","moderno","Eu gosto de arte moderna."],
+  ["A2","ancient","This is an ancient city.","antigo","Esta é uma cidade antiga."],
+  ["A2","popular","This song is very popular.","popular","Esta música é muito popular."],
+  ["A2","perfect","The weather is perfect.","perfeito","O tempo está perfeito."],
+  ["A2","terrible","The food was terrible.","terrível, péssimo","A comida estava péssima."],
+  ["A2","boring","The movie was boring.","chato, entediante","O filme foi chato."],
+  ["A2","funny","He is very funny.","engraçado","Ele é muito engraçado."],
+  ["A2","strange","That's strange.","estranho","Isso é estranho."],
+  ["A2","lucky","You are lucky!","sortudo","Você é sortudo!"],
+  ["A2","proud","I'm proud of you.","orgulhoso","Estou orgulhoso de você."],
+  ["A2","nervous","I'm nervous about the exam.","nervoso","Estou nervoso com a prova."],
+  ["A2","excited","I'm excited about the trip.","animado, empolgado","Estou animado com a viagem."],
+  ["A2","bored","I'm bored.","entediado","Estou entediado."],
+  ["A2","worried","She is worried about her son.","preocupado","Ela está preocupada com o filho."],
+  ["A2","upset","Why are you upset?","chateado","Por que você está chateado?"],
+  ["A2","friendly","The people here are friendly.","simpático, amigável","As pessoas aqui são simpáticas."],
+  ["A2","polite","Be polite to the guests.","educado","Seja educado com os convidados."],
+  ["A2","rude","Don't be rude.","grosseiro, mal-educado","Não seja grosseiro."],
+  ["A2","kind","She is a kind person.","gentil; tipo","Ela é uma pessoa gentil."],
+  ["A2","clever","My daughter is very clever.","inteligente, esperto","Minha filha é muito inteligente."],
+  ["A2","lazy","Don't be lazy.","preguiçoso","Não seja preguiçoso."],
+  ["A2","shy","He is too shy to speak.","tímido","Ele é tímido demais para falar."],
+  ["A2","serious","This is a serious problem.","sério","Este é um problema sério."],
+  ["A2","honest","Be honest with me.","honesto","Seja honesto comigo."],
+  ["A2","calm","Stay calm.","calmo","Fique calmo."],
+  ["A2","comfortable","This chair is comfortable.","confortável","Esta cadeira é confortável."],
+  ["A2","available","Is this room available?","disponível","Este quarto está disponível?"],
+  ["A2","alone","I live alone.","sozinho","Eu moro sozinho."],
+  ["A2","together","We work together.","juntos","Nós trabalhamos juntos."],
+  ["A2","almost","I'm almost done.","quase","Estou quase terminando."],
+  ["A2","quite","It's quite cold today.","bastante, bem","Está bem frio hoje."],
+  ["A2","really","I really like it.","realmente, muito","Eu gosto muito."],
+  ["A2","maybe","Maybe tomorrow.","talvez","Talvez amanhã."],
+  ["A2","perhaps","Perhaps she is right.","talvez","Talvez ela esteja certa."],
+  ["A2","especially","I love fruit, especially mango.","especialmente","Eu amo frutas, especialmente manga."],
+  ["A2","finally","We finally arrived.","finalmente","Finalmente chegamos."],
+  ["A2","suddenly","Suddenly, it started to rain.","de repente","De repente, começou a chover."],
+  ["A2","recently","I recently moved here.","recentemente","Eu me mudei para cá recentemente."],
+  ["A2","later","See you later.","mais tarde","Até mais tarde."],
+  ["A2","ago","I came here two years ago.","atrás (tempo)","Eu vim para cá há dois anos."],
+  ["A2","yet","I haven't eaten yet.","ainda (negativa)","Eu ainda não comi."],
+  ["A2","ever","Have you ever been to Paris?","alguma vez, já","Você já esteve em Paris?"],
+  ["A2","anyway","Anyway, let's go.","de qualquer forma","De qualquer forma, vamos."],
+  ["A2","instead","Let's walk instead.","em vez disso","Vamos caminhar em vez disso."],
+  ["A2","else","What else do you need?","mais, outro","O que mais você precisa?"],
+  ["A2","everyone","Everyone is here.","todo mundo","Todo mundo está aqui."],
+  ["A2","everything","Everything is fine.","tudo","Está tudo bem."],
+  ["A2","something","I want to tell you something.","algo, alguma coisa","Quero te contar uma coisa."],
+  ["A2","nothing","There's nothing to eat.","nada","Não há nada para comer."],
+  ["A2","someone","Someone called you.","alguém","Alguém ligou para você."],
+  ["A2","nobody","Nobody knows.","ninguém","Ninguém sabe."],
+  ["A2","anything","Do you need anything?","qualquer coisa, algo","Você precisa de alguma coisa?"],
+  ["A2","somewhere","Let's go somewhere quiet.","em algum lugar","Vamos para algum lugar tranquilo."],
+  ["A2","against","We played against a strong team.","contra","Nós jogamos contra um time forte."],
+  ["A2","through","Walk through the park.","através de, por","Caminhe pelo parque."],
+  ["A2","across","The bank is across the street.","do outro lado de, através","O banco fica do outro lado da rua."],
+  ["A2","along","We walked along the river.","ao longo de","Nós andamos ao longo do rio."],
+  ["A2","towards","She walked towards the door.","em direção a","Ela andou em direção à porta."],
+  ["A2","among","He is among the best.","entre (vários)","Ele está entre os melhores."],
+  ["A2","since","I have lived here since 2020.","desde","Eu moro aqui desde 2020."],
+  ["A2","while","I read while I wait.","enquanto","Eu leio enquanto espero."],
+  ["A2","unless","I'll go unless it rains.","a menos que","Eu vou, a menos que chova."],
+  ["A2","though","It's small, though it's comfortable.","embora, apesar de","É pequeno, mas confortável."],
+  ["A2","either","You can take either one.","qualquer um (de dois)","Você pode pegar qualquer um dos dois."],
+  ["A2","neither","Neither of them came.","nenhum (de dois)","Nenhum dos dois veio."],
+  ["A2","whether","I don't know whether to go.","se (dúvida)","Não sei se devo ir."],
+  ["B1","accept","I accept your offer.","aceitar","Eu aceito sua oferta."],
+  ["B1","admit","He admitted his mistake.","admitir","Ele admitiu seu erro."],
+  ["B1","affect","The weather affects my mood.","afetar","O tempo afeta meu humor."],
+  ["B1","afford","I can't afford a new car.","ter condições de pagar","Não tenho condições de comprar um carro novo."],
+  ["B1","apologize","I apologize for the delay.","pedir desculpas","Peço desculpas pelo atraso."],
+  ["B1","apply","I applied for the job.","candidatar-se, aplicar","Eu me candidatei à vaga."],
+  ["B1","argue","They argue all the time.","discutir, argumentar","Eles discutem o tempo todo."],
+  ["B1","attack","The dog attacked the cat.","atacar; ataque","O cachorro atacou o gato."],
+  ["B1","attract","The city attracts many tourists.","atrair","A cidade atrai muitos turistas."],
+  ["B1","behave","Behave yourself!","comportar-se","Comporte-se!"],
+  ["B1","blame","Don't blame me.","culpar","Não me culpe."],
+  ["B1","breathe","Breathe deeply.","respirar","Respire fundo."],
+  ["B1","calculate","Calculate the total.","calcular","Calcule o total."],
+  ["B1","charge","How much do you charge?","cobrar; carregar (bateria)","Quanto você cobra?"],
+  ["B1","claim","He claims he was at home.","afirmar, alegar","Ele alega que estava em casa."],
+  ["B1","communicate","We communicate by email.","comunicar-se","Nós nos comunicamos por e-mail."],
+  ["B1","concentrate","I can't concentrate with this noise.","concentrar-se","Não consigo me concentrar com esse barulho."],
+  ["B1","confirm","Please confirm your booking.","confirmar","Por favor, confirme sua reserva."],
+  ["B1","connect","Connect to the Wi-Fi.","conectar","Conecte-se ao Wi-Fi."],
+  ["B1","contain","This box contains books.","conter","Esta caixa contém livros."],
+  ["B1","control","I can't control my dog.","controlar; controle","Não consigo controlar meu cachorro."],
+  ["B1","convince","She convinced me to stay.","convencer","Ela me convenceu a ficar."],
+  ["B1","deal","It's a deal!","acordo; lidar","Fechado!"],
+  ["B1","defend","He defended his idea.","defender","Ele defendeu sua ideia."],
+  ["B1","demand","They demand better pay.","exigir; demanda","Eles exigem um pagamento melhor."],
+  ["B1","deny","She denied everything.","negar","Ela negou tudo."],
+  ["B1","deserve","You deserve a break.","merecer","Você merece uma pausa."],
+  ["B1","destroy","The fire destroyed the house.","destruir","O fogo destruiu a casa."],
+  ["B1","disappear","My keys disappeared.","desaparecer","Minhas chaves desapareceram."],
+  ["B1","discover","They discovered a new species.","descobrir","Eles descobriram uma nova espécie."],
+  ["B1","divide","Divide the cake into six pieces.","dividir","Divida o bolo em seis pedaços."],
+  ["B1","doubt","I doubt it.","duvidar; dúvida","Eu duvido."],
+  ["B1","encourage","My parents encouraged me to study.","incentivar","Meus pais me incentivaram a estudar."],
+  ["B1","escape","The bird escaped from the cage.","escapar, fugir","O pássaro fugiu da gaiola."],
+  ["B1","examine","The doctor examined my eyes.","examinar","O médico examinou meus olhos."],
+  ["B1","exist","Ghosts don't exist.","existir","Fantasmas não existem."],
+  ["B1","explore","Let's explore the city.","explorar","Vamos explorar a cidade."],
+  ["B1","express","She expressed her feelings.","expressar","Ela expressou seus sentimentos."],
+  ["B1","focus","Focus on your work.","focar; foco","Foque no seu trabalho."],
+  ["B1","force","Don't force it.","forçar; força","Não force."],
+  ["B1","gain","I gained weight on vacation.","ganhar, adquirir","Eu ganhei peso nas férias."],
+  ["B1","generate","The sun generates energy.","gerar","O sol gera energia."],
+  ["B1","grow","Plants grow fast in summer.","crescer, cultivar","As plantas crescem rápido no verão."],
+  ["B1","handle","I can handle it.","lidar com","Eu consigo lidar com isso."],
+  ["B1","hide","The cat is hiding under the bed.","esconder","O gato está se escondendo embaixo da cama."],
+  ["B1","hire","We hired a new designer.","contratar","Nós contratamos um designer novo."],
+  ["B1","identify","Can you identify the problem?","identificar","Você consegue identificar o problema?"],
+  ["B1","ignore","Just ignore him.","ignorar","Apenas ignore-o."],
+  ["B1","increase","Prices increased last month.","aumentar; aumento","Os preços aumentaram no mês passado."],
+  ["B1","indicate","The sign indicates the exit.","indicar","A placa indica a saída."],
+  ["B1","influence","Music influences my mood.","influenciar; influência","A música influencia meu humor."],
+  ["B1","inform","Please inform us of any changes.","informar","Por favor, nos informe sobre qualquer mudança."],
+  ["B1","insist","He insisted on paying.","insistir","Ele insistiu em pagar."],
+  ["B1","install","Install the update.","instalar","Instale a atualização."],
+  ["B1","intend","I intend to travel next year.","pretender","Pretendo viajar no ano que vem."],
+  ["B1","invent","Who invented the telephone?","inventar","Quem inventou o telefone?"],
+  ["B1","invest","She invests in real estate.","investir","Ela investe em imóveis."],
+  ["B1","involve","The job involves a lot of travel.","envolver","O trabalho envolve muitas viagens."],
+  ["B1","judge","Don't judge a book by its cover.","julgar; juiz","Não julgue um livro pela capa."],
+  ["B1","lack","We lack experience.","faltar; falta","Nos falta experiência."],
+  ["B1","launch","They launched a new product.","lançar","Eles lançaram um produto novo."],
+  ["B1","limit","Limit your screen time.","limitar; limite","Limite seu tempo de tela."],
+  ["B1","maintain","Maintain a healthy diet.","manter","Mantenha uma dieta saudável."],
+  ["B1","measure","Measure the room.","medir; medida","Meça o cômodo."],
+  ["B1","mix","Mix the flour and sugar.","misturar","Misture a farinha e o açúcar."],
+  ["B1","obtain","He obtained a visa.","obter","Ele obteve um visto."],
+  ["B1","occur","The accident occurred at night.","ocorrer","O acidente ocorreu à noite."],
+  ["B1","organize","She organized the event.","organizar","Ela organizou o evento."],
+  ["B1","overcome","He overcame his fear.","superar","Ele superou seu medo."],
+  ["B1","participate","Everyone can participate.","participar","Todos podem participar."],
+  ["B1","perform","The band performed live.","apresentar-se, desempenhar","A banda se apresentou ao vivo."],
+  ["B1","persuade","I persuaded him to come.","persuadir","Eu o persuadi a vir."],
+  ["B1","point","He pointed at the map.","apontar; ponto","Ele apontou para o mapa."],
+  ["B1","predict","No one can predict the future.","prever","Ninguém pode prever o futuro."],
+  ["B1","press","Press the button.","pressionar, apertar; imprensa","Aperte o botão."],
+  ["B1","prevent","Vaccines prevent diseases.","prevenir, impedir","Vacinas previnem doenças."],
+  ["B1","produce","This farm produces milk.","produzir","Esta fazenda produz leite."],
+  ["B1","prove","Can you prove it?","provar (demonstrar)","Você pode provar isso?"],
+  ["B1","provide","The hotel provides breakfast.","fornecer","O hotel fornece café da manhã."],
+  ["B1","publish","She published a book.","publicar","Ela publicou um livro."],
+  ["B1","raise","Raise your hand.","levantar, aumentar, criar (filhos)","Levante a mão."],
+  ["B1","realize","I realized I was wrong.","perceber","Eu percebi que estava errado."],
+  ["B1","recognize","I didn't recognize you.","reconhecer","Eu não te reconheci."],
+  ["B1","refer","Refer to page ten.","referir-se","Consulte a página dez."],
+  ["B1","reflect","The lake reflects the sky.","refletir","O lago reflete o céu."],
+  ["B1","refuse","He refused to help.","recusar","Ele se recusou a ajudar."],
+  ["B1","regret","I regret nothing.","arrepender-se","Não me arrependo de nada."],
+  ["B1","relate","I can relate to that.","relacionar-se, identificar-se","Eu me identifico com isso."],
+  ["B1","release","The movie was released in May.","lançar, liberar","O filme foi lançado em maio."],
+  ["B1","rely","You can rely on me.","confiar, contar com","Você pode contar comigo."],
+  ["B1","remain","Please remain seated.","permanecer","Por favor, permaneçam sentados."],
+  ["B1","remind","Remind me to call her.","lembrar (alguém)","Me lembre de ligar para ela."],
+  ["B1","remove","Remove your shoes.","remover, tirar","Tire os sapatos."],
+  ["B1","replace","We need to replace the battery.","substituir","Precisamos substituir a bateria."],
+  ["B1","represent","She represents our company.","representar","Ela representa nossa empresa."],
+  ["B1","require","This job requires experience.","exigir, requerer","Este trabalho exige experiência."],
+  ["B1","respect","Respect your elders.","respeitar; respeito","Respeite os mais velhos."],
+  ["B1","respond","She responded quickly.","responder","Ela respondeu rapidamente."],
+  ["B1","retire","My father retired last year.","aposentar-se","Meu pai se aposentou no ano passado."],
+  ["B1","reveal","She revealed the secret.","revelar","Ela revelou o segredo."],
+  ["B1","review","Review your notes.","revisar; avaliação","Revise suas anotações."],
+  ["B1","satisfy","The result satisfied everyone.","satisfazer","O resultado satisfez a todos."],
+  ["B1","seem","You seem tired.","parecer","Você parece cansado."],
+  ["B1","select","Select an option.","selecionar","Selecione uma opção."],
+  ["B1","settle","They settled in Canada.","estabelecer-se, resolver","Eles se estabeleceram no Canadá."],
+  ["B1","solve","Let's solve this problem.","resolver","Vamos resolver este problema."],
+  ["B1","spread","The news spread quickly.","espalhar","A notícia se espalhou rapidamente."],
+  ["B1","struggle","I struggle with math.","ter dificuldade; luta","Eu tenho dificuldade com matemática."],
+  ["B1","submit","Submit your application.","enviar, submeter","Envie sua inscrição."],
+  ["B1","suffer","He suffers from allergies.","sofrer","Ele sofre de alergias."],
+  ["B1","supply","They supply food to schools.","fornecer; suprimento","Eles fornecem comida para escolas."],
+  ["B1","suppose","I suppose you're right.","supor","Suponho que você tenha razão."],
+  ["B1","survive","They survived the storm.","sobreviver","Eles sobreviveram à tempestade."],
+  ["B1","tend","I tend to wake up early.","tender a","Eu tendo a acordar cedo."],
+  ["B1","threaten","The storm threatens the city.","ameaçar","A tempestade ameaça a cidade."],
+  ["B1","treat","Treat others with respect.","tratar","Trate os outros com respeito."],
+  ["B1","trust","I trust you.","confiar; confiança","Eu confio em você."],
+  ["B1","upgrade","I upgraded my phone.","atualizar, melhorar","Eu troquei meu celular por um melhor."],
+  ["B1","warn","I warned you.","avisar, alertar","Eu te avisei."],
+  ["B1","wonder","I wonder where she is.","perguntar-se","Eu me pergunto onde ela está."],
+  ["B1","ability","She has the ability to lead.","habilidade, capacidade","Ela tem a capacidade de liderar."],
+  ["B1","access","Do you have internet access?","acesso","Você tem acesso à internet?"],
+  ["B1","account","I opened a bank account.","conta","Eu abri uma conta bancária."],
+  ["B1","action","We need to take action.","ação","Precisamos agir."],
+  ["B1","activity","Reading is my favorite activity.","atividade","Ler é minha atividade favorita."],
+  ["B1","agreement","They signed an agreement.","acordo","Eles assinaram um acordo."],
+  ["B1","amount","A small amount of salt.","quantidade","Uma pequena quantidade de sal."],
+  ["B1","area","This area is very safe.","área","Esta área é muito segura."],
+  ["B1","argument","They had an argument.","discussão, argumento","Eles tiveram uma discussão."],
+  ["B1","attention","Pay attention!","atenção","Preste atenção!"],
+  ["B1","attitude","He has a positive attitude.","atitude","Ele tem uma atitude positiva."],
+  ["B1","balance","Keep a balance between work and rest.","equilíbrio; saldo","Mantenha um equilíbrio entre trabalho e descanso."],
+  ["B1","behavior","His behavior was strange.","comportamento","O comportamento dele foi estranho."],
+  ["B1","benefit","Exercise has many benefits.","benefício","Exercício tem muitos benefícios."],
+  ["B1","challenge","Learning English is a challenge.","desafio","Aprender inglês é um desafio."],
+  ["B1","chance","Give me a chance.","chance","Me dê uma chance."],
+  ["B1","choice","It's your choice.","escolha","A escolha é sua."],
+  ["B1","community","We love our community.","comunidade","Nós amamos nossa comunidade."],
+  ["B1","condition","The car is in good condition.","condição","O carro está em boas condições."],
+  ["B1","confidence","She speaks with confidence.","confiança","Ela fala com confiança."],
+  ["B1","connection","The connection is slow.","conexão","A conexão está lenta."],
+  ["B1","culture","I love Japanese culture.","cultura","Eu amo a cultura japonesa."],
+  ["B1","decision","That was a hard decision.","decisão","Foi uma decisão difícil."],
+  ["B1","detail","Tell me every detail.","detalhe","Me conte cada detalhe."],
+  ["B1","difference","What's the difference?","diferença","Qual é a diferença?"],
+  ["B1","effect","Coffee has a strong effect on me.","efeito","O café tem um efeito forte em mim."],
+  ["B1","effort","Thank you for your effort.","esforço","Obrigado pelo seu esforço."],
+  ["B1","energy","I have no energy today.","energia","Não tenho energia hoje."],
+  ["B1","event","The event was a success.","evento","O evento foi um sucesso."],
+  ["B1","evidence","There is no evidence.","evidência, prova","Não há evidência."],
+  ["B1","example","Give me an example.","exemplo","Me dê um exemplo."],
+  ["B1","fact","It's a fact.","fato","É um fato."],
+  ["B1","fear","I have a fear of heights.","medo","Eu tenho medo de altura."],
+  ["B1","feeling","I have a good feeling about this.","sentimento, sensação","Tenho um bom pressentimento sobre isso."],
+  ["B1","goal","My goal is to speak English fluently.","objetivo, meta","Minha meta é falar inglês fluentemente."],
+  ["B1","growth","The company had strong growth.","crescimento","A empresa teve um forte crescimento."],
+  ["B1","habit","Reading is a good habit.","hábito","Ler é um bom hábito."],
+  ["B1","health","Health comes first.","saúde","A saúde vem primeiro."],
+  ["B1","history","I love history.","história","Eu amo história."],
+  ["B1","hobby","My hobby is photography.","hobby, passatempo","Meu hobby é fotografia."],
+  ["B1","impact","The news had a big impact.","impacto","A notícia teve um grande impacto."],
+  ["B1","industry","She works in the fashion industry.","indústria, setor","Ela trabalha no setor da moda."],
+  ["B1","information","I need more information.","informação","Eu preciso de mais informações."],
+  ["B1","issue","We have a small issue.","questão, problema","Temos um pequeno problema."],
+  ["B1","knowledge","Knowledge is power.","conhecimento","Conhecimento é poder."],
+  ["B1","language","English is a global language.","idioma, língua","O inglês é um idioma global."],
+  ["B1","law","It's against the law.","lei","É contra a lei."],
+  ["B1","level","What level are you?","nível","Em que nível você está?"],
+  ["B1","memory","I have a good memory.","memória","Eu tenho boa memória."],
+  ["B1","method","This method works well.","método","Este método funciona bem."],
+  ["B1","mind","Keep an open mind.","mente; importar-se","Mantenha a mente aberta."],
+  ["B1","moment","Just a moment, please.","momento","Só um momento, por favor."],
+  ["B1","nature","I love spending time in nature.","natureza","Eu amo passar tempo na natureza."],
+  ["B1","opinion","In my opinion, it's too expensive.","opinião","Na minha opinião, é caro demais."],
+  ["B1","option","You have two options.","opção","Você tem duas opções."],
+  ["B1","period","A short period of time.","período","Um curto período de tempo."],
+  ["B1","position","What's your position in the company?","posição, cargo","Qual é o seu cargo na empresa?"],
+  ["B1","power","Knowledge is power.","poder, energia","Conhecimento é poder."],
+  ["B1","pressure","I'm under a lot of pressure.","pressão","Estou sob muita pressão."],
+  ["B1","process","The process takes two days.","processo","O processo leva dois dias."],
+  ["B1","progress","You're making progress.","progresso","Você está progredindo."],
+  ["B1","purpose","What's the purpose of this?","propósito","Qual é o propósito disto?"],
+  ["B1","quality","Quality matters more than quantity.","qualidade","Qualidade importa mais que quantidade."],
+  ["B1","relationship","They have a good relationship.","relacionamento","Eles têm um bom relacionamento."],
+  ["B1","research","She does research on climate.","pesquisa","Ela faz pesquisa sobre clima."],
+  ["B1","responsibility","It's my responsibility.","responsabilidade","É minha responsabilidade."],
+  ["B1","risk","Don't take risks.","risco","Não corra riscos."],
+  ["B1","role","She plays an important role.","papel, função","Ela tem um papel importante."],
+  ["B1","rule","Follow the rules.","regra","Siga as regras."],
+  ["B1","situation","It's a difficult situation.","situação","É uma situação difícil."],
+  ["B1","society","Society is changing.","sociedade","A sociedade está mudando."],
+  ["B1","solution","We found a solution.","solução","Encontramos uma solução."],
+  ["B1","source","What's your source?","fonte","Qual é a sua fonte?"],
+  ["B1","space","There's no space left.","espaço","Não sobrou espaço."],
+  ["B1","standard","The standard is high.","padrão","O padrão é alto."],
+  ["B1","strength","His strength is patience.","força, ponto forte","O ponto forte dele é a paciência."],
+  ["B1","structure","The structure is solid.","estrutura","A estrutura é sólida."],
+  ["B1","success","Success takes time.","sucesso","O sucesso leva tempo."],
+  ["B1","system","The system is down.","sistema","O sistema está fora do ar."],
+  ["B1","task","This task is easy.","tarefa","Esta tarefa é fácil."],
+  ["B1","technology","Technology changes fast.","tecnologia","A tecnologia muda rápido."],
+  ["B1","theory","It's just a theory.","teoria","É só uma teoria."],
+  ["B1","thought","That's an interesting thought.","pensamento","É um pensamento interessante."],
+  ["B1","truth","Tell me the truth.","verdade","Me diga a verdade."],
+  ["B1","value","Family is my top value.","valor","Família é meu maior valor."],
+  ["B1","variety","There's a variety of options.","variedade","Há uma variedade de opções."],
+  ["B1","view","The view from here is amazing.","vista; visão","A vista daqui é incrível."],
+  ["B1","voice","She has a beautiful voice.","voz","Ela tem uma voz linda."],
+  ["B1","wealth","Health is better than wealth.","riqueza","Saúde é melhor que riqueza."],
+  ["B1","absolutely","You're absolutely right.","absolutamente","Você está absolutamente certo."],
+  ["B1","actually","Actually, I don't like coffee.","na verdade","Na verdade, eu não gosto de café."],
+  ["B1","basically","Basically, we need more time.","basicamente","Basicamente, precisamos de mais tempo."],
+  ["B1","certainly","Certainly, I can help.","certamente","Certamente, posso ajudar."],
+  ["B1","clearly","She clearly loves her job.","claramente","Ela claramente ama seu trabalho."],
+  ["B1","completely","I completely forgot.","completamente","Eu esqueci completamente."],
+  ["B1","definitely","I'll definitely come.","com certeza","Com certeza eu vou."],
+  ["B1","eventually","Eventually, he agreed.","por fim, no final","No final, ele concordou."],
+  ["B1","exactly","That's exactly what I meant.","exatamente","É exatamente o que eu quis dizer."],
+  ["B1","extremely","It's extremely hot.","extremamente","Está extremamente quente."],
+  ["B1","generally","I generally wake up early.","geralmente","Eu geralmente acordo cedo."],
+  ["B1","hardly","I could hardly hear you.","mal, quase não","Eu mal conseguia ouvir você."],
+  ["B1","immediately","Call me immediately.","imediatamente","Me ligue imediatamente."],
+  ["B1","mostly","I mostly work from home.","principalmente, na maior parte","Eu trabalho principalmente de casa."],
+  ["B1","nearly","It's nearly midnight.","quase","É quase meia-noite."],
+  ["B1","obviously","Obviously, he was lying.","obviamente","Obviamente, ele estava mentindo."],
+  ["B1","otherwise","Hurry, otherwise we'll be late.","caso contrário","Rápido, senão vamos nos atrasar."],
+  ["B1","particularly","I particularly like this song.","particularmente","Eu gosto particularmente desta música."],
+  ["B1","rarely","I rarely eat fast food.","raramente","Eu raramente como fast food."],
+  ["B1","seriously","Are you serious? Seriously?","sério, seriamente","Está falando sério? Sério?"],
+  ["B1","simply","It's simply not true.","simplesmente","Simplesmente não é verdade."],
+  ["B1","slightly","The soup is slightly salty.","levemente","A sopa está levemente salgada."],
+  ["B1","somehow","Somehow, it worked.","de alguma forma","De alguma forma, funcionou."],
+  ["B1","therefore","It rained; therefore, the game was cancelled.","portanto","Choveu; portanto, o jogo foi cancelado."],
+  ["B1","unfortunately","Unfortunately, we lost.","infelizmente","Infelizmente, perdemos."],
+  ["B1","whatever","Do whatever you want.","o que quer que, qualquer coisa","Faça o que você quiser."],
+  ["B1","whenever","Call me whenever you need.","sempre que","Me ligue sempre que precisar."],
+  ["B1","wherever","I'll go wherever you go.","onde quer que","Irei aonde você for."],
+  ["B1","meanwhile","Meanwhile, I'll make dinner.","enquanto isso","Enquanto isso, vou fazer o jantar."],
+  ["B1","despite","We went out despite the rain.","apesar de","Saímos apesar da chuva."],
+  ["B1","beyond","The store is just beyond the bridge.","além de","A loja fica logo depois da ponte."],
+  ["B1","within","I'll reply within an hour.","dentro de (tempo)","Vou responder dentro de uma hora."],
+  ["B1","according","According to the news, it will snow.","de acordo com","De acordo com as notícias, vai nevar."],
+  ["B1","aware","I'm aware of the problem.","ciente","Estou ciente do problema."],
+  ["B1","brilliant","That's a brilliant idea!","brilhante, genial","Essa é uma ideia genial!"],
+  ["B1","capable","She is capable of anything.","capaz","Ela é capaz de qualquer coisa."],
+  ["B1","common","It's a common mistake.","comum","É um erro comum."],
+  ["B1","confident","Be confident in yourself.","confiante","Seja confiante em si mesmo."],
+  ["B1","curious","I'm curious about the result.","curioso","Estou curioso sobre o resultado."],
+  ["B1","disappointed","I'm disappointed with the service.","decepcionado","Estou decepcionado com o serviço."],
+  ["B1","efficient","This system is very efficient.","eficiente","Este sistema é muito eficiente."],
+  ["B1","embarrassed","I felt embarrassed.","envergonhado, constrangido","Eu me senti constrangido."],
+  ["B1","enormous","They live in an enormous house.","enorme","Eles moram em uma casa enorme."],
+  ["B1","essential","Water is essential for life.","essencial","A água é essencial para a vida."],
+  ["B1","fair","That's not fair!","justo; feira","Isso não é justo!"],
+  ["B1","familiar","Your face looks familiar.","familiar, conhecido","Seu rosto parece familiar."],
+  ["B1","fluent","She is fluent in three languages.","fluente","Ela é fluente em três idiomas."],
+  ["B1","frightened","The child was frightened.","assustado","A criança estava assustada."],
+  ["B1","generous","He is very generous.","generoso","Ele é muito generoso."],
+  ["B1","grateful","I'm grateful for your help.","grato","Sou grato pela sua ajuda."],
+  ["B1","guilty","He felt guilty.","culpado","Ele se sentiu culpado."],
+  ["B1","huge","It was a huge success.","enorme","Foi um sucesso enorme."],
+  ["B1","impressive","Your work is impressive.","impressionante","Seu trabalho é impressionante."],
+  ["B1","independent","She is very independent.","independente","Ela é muito independente."],
+  ["B1","jealous","He is jealous of his brother.","ciumento, invejoso","Ele tem ciúmes do irmão."],
+  ["B1","likely","It's likely to rain.","provável","É provável que chova."],
+  ["B1","lonely","I felt lonely in the new city.","solitário","Eu me senti sozinho na cidade nova."],
+  ["B1","mad","Are you mad at me?","bravo (US); louco (UK)","Você está bravo comigo?"],
+  ["B1","obvious","The answer is obvious.","óbvio","A resposta é óbvia."],
+  ["B1","ordinary","It was an ordinary day.","comum, normal","Foi um dia comum."],
+  ["B1","patient","Be patient.","paciente","Seja paciente."],
+  ["B1","peaceful","This village is peaceful.","tranquilo, pacífico","Esta vila é tranquila."],
+  ["B1","pleasant","We had a pleasant evening.","agradável","Tivemos uma noite agradável."],
+  ["B1","practical","Be practical.","prático","Seja prático."],
+  ["B1","previous","My previous job was in sales.","anterior","Meu emprego anterior era em vendas."],
+  ["B1","private","This is a private conversation.","privado, particular","Esta é uma conversa particular."],
+  ["B1","public","Public transport is cheap here.","público","O transporte público é barato aqui."],
+  ["B1","reasonable","The price is reasonable.","razoável","O preço é razoável."],
+  ["B1","relevant","Is this relevant?","relevante","Isso é relevante?"],
+  ["B1","reliable","My car is reliable.","confiável","Meu carro é confiável."],
+  ["B1","remarkable","She made remarkable progress.","notável","Ela fez um progresso notável."],
+  ["B1","responsible","Who is responsible for this?","responsável","Quem é responsável por isto?"],
+  ["B1","rough","The sea was rough.","agitado, áspero","O mar estava agitado."],
+  ["B1","scared","I'm scared of the dark.","com medo","Tenho medo do escuro."],
+  ["B1","sensitive","My skin is sensitive.","sensível","Minha pele é sensível."],
+  ["B1","sharp","This knife is sharp.","afiado","Esta faca é afiada."],
+  ["B1","silly","Don't be silly.","bobo","Não seja bobo."],
+  ["B1","similar","We have similar tastes.","parecido, similar","Temos gostos parecidos."],
+  ["B1","smooth","The road is smooth.","liso, suave","A estrada é lisa."],
+  ["B1","spare","Do you have a spare key?","reserva, sobressalente","Você tem uma chave reserva?"],
+  ["B1","stressed","I'm stressed about work.","estressado","Estou estressado com o trabalho."],
+  ["B1","suitable","This movie is not suitable for kids.","adequado","Este filme não é adequado para crianças."],
+  ["B1","typical","It's a typical Brazilian dish.","típico","É um prato típico brasileiro."],
+  ["B1","unusual","It's unusual for him to be late.","incomum","É incomum ele se atrasar."],
+  ["B1","urgent","This is urgent.","urgente","Isto é urgente."],
+  ["B1","useful","This app is very useful.","útil","Este aplicativo é muito útil."],
+  ["B1","valuable","Your time is valuable.","valioso","Seu tempo é valioso."],
+  ["B1","willing","I'm willing to help.","disposto","Estou disposto a ajudar."],
+  ["B1","wise","That was a wise decision.","sábio","Foi uma decisão sábia."],
+  ["B1","atmosphere","The restaurant has a nice atmosphere.","atmosfera, clima","O restaurante tem um clima agradável."],
+  ["B1","audience","The audience loved the show.","público, plateia","A plateia amou o show."],
+  ["B1","author","Who is the author of this book?","autor","Quem é o autor deste livro?"],
+  ["B1","chapter","Read chapter three.","capítulo","Leia o capítulo três."],
+  ["B1","character","The main character is a detective.","personagem; caráter","O personagem principal é um detetive."],
+  ["B1","plot","The plot is confusing.","enredo","O enredo é confuso."],
+  ["B1","novel","I'm reading a novel.","romance (livro)","Estou lendo um romance."],
+  ["B1","poem","She wrote a poem.","poema","Ela escreveu um poema."],
+  ["B1","sentence","Write a sentence.","frase","Escreva uma frase."],
+  ["B1","paragraph","Read the first paragraph.","parágrafo","Leia o primeiro parágrafo."],
+  ["B1","phrase","This phrase is common.","expressão, frase","Esta expressão é comum."],
+  ["B1","vocabulary","I'm learning new vocabulary.","vocabulário","Estou aprendendo vocabulário novo."],
+  ["B1","grammar","English grammar is not so hard.","gramática","A gramática inglesa não é tão difícil."],
+  ["B1","pronunciation","Her pronunciation is perfect.","pronúncia","A pronúncia dela é perfeita."],
+  ["B1","accent","I love the British accent.","sotaque","Eu amo o sotaque britânico."],
+  ["B1","meaning","What's the meaning of this?","significado","Qual é o significado disto?"],
+  ["B1","conversation","We had a long conversation.","conversa","Tivemos uma longa conversa."],
+  ["B1","expression","That's a common expression.","expressão","É uma expressão comum."],
+  ["B1","joke","Tell me a joke.","piada","Me conte uma piada."],
+  ["B1","secret","Can you keep a secret?","segredo","Você sabe guardar segredo?"],
+  ["B1","surprise","What a surprise!","surpresa","Que surpresa!"],
+  ["B1","adventure","Life is an adventure.","aventura","A vida é uma aventura."],
+  ["B1","dream","I had a strange dream.","sonho; sonhar","Eu tive um sonho estranho."],
+  ["B1","luck","Good luck!","sorte","Boa sorte!"],
+  ["B1","peace","We want peace.","paz","Nós queremos paz."],
+  ["B1","war","War is terrible.","guerra","Guerra é terrível."],
+  ["B1","freedom","Freedom is precious.","liberdade","A liberdade é preciosa."],
+  ["B1","justice","We want justice.","justiça","Queremos justiça."],
+  ["B1","future","The future is uncertain.","futuro","O futuro é incerto."],
+  ["B1","past","Forget the past.","passado","Esqueça o passado."],
+  ["B1","present","Live in the present.","presente","Viva no presente."],
+  ["B1","century","The house is a century old.","século","A casa tem um século."],
+  ["B1","decade","A decade is ten years.","década","Uma década são dez anos."],
+  ["B1","generation","My generation grew up online.","geração","Minha geração cresceu na internet."],
+  ["B1","childhood","I had a happy childhood.","infância","Eu tive uma infância feliz."],
+  ["B1","adult","Adults pay full price.","adulto","Adultos pagam preço inteiro."],
+  ["B1","teenager","My son is a teenager.","adolescente","Meu filho é adolescente."],
+  ["B1","neighbor","My neighbor is a doctor.","vizinho (US)","Meu vizinho é médico."],
+  ["B1","stranger","Don't talk to strangers.","estranho, desconhecido","Não fale com estranhos."],
+  ["B1","crowd","There was a big crowd.","multidão","Havia uma multidão."],
+  ["B1","population","The population is growing.","população","A população está crescendo."],
+  ["B1","citizen","She is a Brazilian citizen.","cidadão","Ela é cidadã brasileira."],
+  ["B1","election","The election is next month.","eleição","A eleição é no mês que vem."],
+  ["B1","economy","The economy is improving.","economia","A economia está melhorando."],
+  ["B1","business","Business is good this year.","negócio, empresa","Os negócios vão bem este ano."],
+  ["B1","trade","They trade with China.","comércio; negociar","Eles comercializam com a China."],
+  ["B1","profit","The company made a profit.","lucro","A empresa teve lucro."],
+  ["B1","budget","We have a small budget.","orçamento","Temos um orçamento pequeno."],
+  ["B1","tax","Taxes are high.","imposto","Os impostos são altos."],
+  ["B1","loan","I took out a loan.","empréstimo","Eu peguei um empréstimo."],
+  ["B1","debt","He paid off his debt.","dívida","Ele quitou sua dívida."],
+  ["B1","insurance","Do you have health insurance?","seguro","Você tem plano de saúde?"],
+  ["B1","contract","Read the contract carefully.","contrato","Leia o contrato com atenção."],
+  ["B1","deadline","The deadline is Friday.","prazo","O prazo é sexta-feira."],
+  ["B1","schedule","What's your schedule today?","agenda, cronograma","Qual é a sua agenda hoje?"],
+  ["B1","appointment","I have a doctor's appointment.","consulta, compromisso","Eu tenho uma consulta médica."],
+  ["B1","employee","The company has 50 employees.","funcionário","A empresa tem 50 funcionários."],
+  ["B1","employer","My employer is very fair.","empregador","Meu empregador é muito justo."],
+  ["B1","manager","Talk to the manager.","gerente","Fale com o gerente."],
+  ["B1","staff","The staff was helpful.","equipe, funcionários","A equipe foi prestativa."],
+  ["B1","team","We are a great team.","equipe, time","Somos uma ótima equipe."],
+  ["B1","leader","She is a natural leader.","líder","Ela é uma líder nata."],
+  ["B1","training","We had a training session.","treinamento","Tivemos uma sessão de treinamento."],
+  ["B1","degree","She has a degree in law.","diploma, grau","Ela tem diploma em direito."],
+  ["B1","university","I studied at a public university.","universidade","Eu estudei em uma universidade pública."],
+  ["B1","course","I'm taking an English course.","curso","Estou fazendo um curso de inglês."],
+  ["B1","lesson","The lesson was interesting.","aula, lição","A aula foi interessante."],
+  ["B1","exam","I have an exam tomorrow.","prova, exame","Tenho uma prova amanhã."],
+  ["B1","grade","I got a good grade.","nota; série","Eu tirei uma nota boa."],
+  ["B1","subject","My favorite subject is history.","matéria, assunto","Minha matéria favorita é história."],
+  ["B1","science","Science is fascinating.","ciência","A ciência é fascinante."],
+  ["B1","scientist","She is a scientist.","cientista","Ela é cientista."],
+  ["B1","engineer","My father is an engineer.","engenheiro","Meu pai é engenheiro."],
+  ["B1","lawyer","Talk to a lawyer.","advogado","Fale com um advogado."],
+  ["B1","artist","He is a talented artist.","artista","Ele é um artista talentoso."],
+  ["B1","journalist","She works as a journalist.","jornalista","Ela trabalha como jornalista."],
+  ["B1","farmer","My uncle is a farmer.","fazendeiro, agricultor","Meu tio é agricultor."],
+  ["B1","driver","The driver was very polite.","motorista","O motorista foi muito educado."],
+  ["B1","traffic","The traffic is terrible.","trânsito","O trânsito está terrível."],
+  ["B1","vehicle","Park your vehicle here.","veículo","Estacione seu veículo aqui."],
+  ["B1","fuel","Fuel is expensive.","combustível","O combustível está caro."],
+  ["B1","engine","The engine is making a noise.","motor","O motor está fazendo barulho."],
+  ["B1","machine","This machine is broken.","máquina","Esta máquina está quebrada."],
+  ["B1","tool","Bring your tools.","ferramenta","Traga suas ferramentas."],
+  ["B1","device","Turn off your devices.","dispositivo, aparelho","Desligue seus aparelhos."],
+  ["B1","equipment","We need new equipment.","equipamento","Precisamos de equipamento novo."],
+  ["B1","material","What material is this?","material","De que material é isto?"],
+  ["B1","metal","The door is made of metal.","metal","A porta é feita de metal."],
+  ["B1","wood","The table is made of wood.","madeira","A mesa é feita de madeira."],
+  ["B1","plastic","Avoid plastic bags.","plástico","Evite sacolas plásticas."],
+  ["B1","paper","I need a piece of paper.","papel","Eu preciso de um pedaço de papel."],
+  ["B1","stone","The wall is made of stone.","pedra","O muro é feito de pedra."],
+  ["B1","gold","This ring is made of gold.","ouro","Este anel é de ouro."],
+  ["B1","oil","Add a little oil.","óleo, petróleo","Adicione um pouco de óleo."],
+  ["B1","electricity","The electricity is off.","eletricidade","A eletricidade está desligada."],
+  ["B1","planet","Earth is our planet.","planeta","A Terra é o nosso planeta."],
+  ["B1","earth","The earth is round.","terra, Terra","A Terra é redonda."],
+  ["B1","moon","The moon is full tonight.","lua","A lua está cheia hoje."],
+  ["B1","star","Look at the stars.","estrela","Olhe as estrelas."],
+  ["B1","forest","We walked through the forest.","floresta","Caminhamos pela floresta."],
+  ["B1","island","They live on an island.","ilha","Eles moram em uma ilha."],
+  ["B1","lake","We swam in the lake.","lago","Nadamos no lago."],
+  ["B1","desert","The desert is hot and dry.","deserto","O deserto é quente e seco."],
+  ["B1","climate","The climate here is mild.","clima","O clima aqui é ameno."],
+  ["B1","temperature","The temperature is 30 degrees.","temperatura","A temperatura é de 30 graus."],
+  ["B1","pollution","Pollution is a big problem.","poluição","A poluição é um grande problema."],
+  ["B1","recycle","We recycle plastic and paper.","reciclar","Nós reciclamos plástico e papel."],
+  ["B1","species","Many species are in danger.","espécie","Muitas espécies estão em perigo."],
+  ["B1","wild","Wild animals live here.","selvagem","Animais selvagens vivem aqui."],
+  ["B1","insect","Insects are everywhere in summer.","inseto","Há insetos por toda parte no verão."],
+  ["B1","horse","I learned to ride a horse.","cavalo","Eu aprendi a andar a cavalo."],
+  ["B1","cow","Cows give milk.","vaca","Vacas dão leite."],
+  ["B1","pet","Do you have a pet?","animal de estimação","Você tem um animal de estimação?"],
+  ["B1","noise","What's that noise?","barulho","Que barulho é esse?"],
+  ["B1","silence","I need silence to study.","silêncio","Eu preciso de silêncio para estudar."],
+  ["B1","shape","What shape is it?","forma, formato","Que formato tem?"],
+  ["B1","edge","Sit on the edge of the bed.","borda, beira","Sente-se na beira da cama."],
+  ["B1","surface","Clean the surface.","superfície","Limpe a superfície."],
+  ["B1","weight","What's your weight?","peso","Qual é o seu peso?"],
+  ["B1","height","What's your height?","altura","Qual é a sua altura?"],
+  ["B1","length","What's the length of the table?","comprimento","Qual é o comprimento da mesa?"],
+  ["B1","speed","Reduce your speed.","velocidade","Reduza a velocidade."],
+  ["B1","piece","A piece of cake, please.","pedaço, peça","Um pedaço de bolo, por favor."],
+  ["B1","pair","I bought a pair of shoes.","par","Eu comprei um par de sapatos."],
+  ["B1","couple","A couple of friends came.","casal; alguns","Alguns amigos vieram."],
+  ["B1","dozen","A dozen eggs, please.","dúzia","Uma dúzia de ovos, por favor."],
+  ["B1","half","Half of the class was absent.","metade","Metade da turma faltou."],
+  ["B1","quarter","It's a quarter past nine.","um quarto","São nove e quinze."],
+  ["B1","percent","Ten percent of people agree.","por cento","Dez por cento das pessoas concordam."],
+  ["B1","average","The average age is 30.","média; médio","A idade média é 30."],
+  ["B1","total","What's the total?","total","Qual é o total?"],
+  ["B1","double","I'll have a double espresso.","duplo; dobrar","Vou querer um expresso duplo."],
+  ["B1","single","A single room, please.","único, solteiro","Um quarto de solteiro, por favor."],
+  ["B1","extra","Can I have extra cheese?","extra, adicional","Pode colocar queijo extra?"],
+  ["B1","rest","Take a rest.","descanso; o resto","Descanse um pouco."],
+  ["B1","step","Watch your step.","passo, degrau","Cuidado com o degrau."],
+  ["B1","line","Stand in line.","linha, fila","Fique na fila."],
+  ["B1","row","We sat in the front row.","fileira","Sentamos na primeira fileira."],
+  ["B1","side","Which side are you on?","lado","De que lado você está?"],
+  ["B1","top","The book is on top of the shelf.","topo, em cima","O livro está em cima da prateleira."],
+  ["B1","bottom","The keys are at the bottom of the bag.","fundo, parte de baixo","As chaves estão no fundo da bolsa."],
+  ["B1","middle","Sit in the middle.","meio","Sente-se no meio."],
+  ["B1","centre","The city centre is busy.","centro (UK)","O centro da cidade é movimentado."],
+  ["B1","front","Wait in front of the school.","frente","Espere na frente da escola."],
+  ["B1","back","Go to the back of the line.","fundo, costas; voltar","Vá para o fim da fila."],
+  ["B1","north","We drove north.","norte","Dirigimos para o norte."],
+  ["B1","south","Brazil is in the south.","sul","O Brasil fica no sul."],
+  ["B1","east","The sun rises in the east.","leste","O sol nasce no leste."],
+  ["B1","west","Go west for two miles.","oeste","Siga para o oeste por duas milhas."]
 ];
-
+ 
 /* ============ STORAGE (com fallback em memória) ============ */
 const KEY_STATS = 'esh_stats_v1', KEY_DECK = 'esh_deck_v1', KEY_PREFS = 'esh_prefs_v1';
 const mem = {};
@@ -450,26 +1505,38 @@ const store = {
   set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch {} }
 };
-
+ 
 /* ============ SPEECH ============ */
 const synth = window.speechSynthesis;
 const prefs = Object.assign({ lang: 'en-US', rate: 0.85 }, store.get(KEY_PREFS, {}));
 let voices = [];
-
+ 
 function loadVoices() {
   voices = synth ? synth.getVoices() : [];
-  const hint = document.getElementById('voiceHint');
+  const hint = document.getElementById('voiceHint'), sel = document.getElementById('voiceSel');
   if (!synth) { hint.textContent = 'Seu navegador não suporta síntese de voz.'; return; }
+  const en = voices.filter(v => /^en[-_]/i.test(v.lang));
+  sel.innerHTML = '<option value="">Automática</option>' + en.map(v =>
+    `<option value="${v.voiceURI}">${v.name} (${v.lang.replace('_','-')}${v.localService ? '' : ', online'})</option>`).join('');
+  sel.value = (prefs.voices && prefs.voices[prefs.lang]) || '';
   const v = pickVoice(prefs.lang);
-  hint.textContent = v ? `Voz: ${v.name}` : 'Nenhuma voz específica encontrada; usando a voz padrão do sistema.';
+  hint.textContent = v ? `Voz em uso: ${v.name} · velocidade ${prefs.rate.toFixed(2)}×` : 'Nenhuma voz em inglês encontrada; usando a voz padrão do sistema.';
 }
 function pickVoice(lang) {
+  const chosen = prefs.voices && prefs.voices[lang];
+  if (chosen) { const v = voices.find(x => x.voiceURI === chosen); if (v) return v; }
   const exact = voices.filter(v => v.lang.replace('_','-').toLowerCase() === lang.toLowerCase());
   const prefer = exact.find(v => /google|natural|premium|enhanced|siri/i.test(v.name)) || exact[0];
   return prefer || voices.find(v => v.lang.toLowerCase().startsWith(lang.slice(0,2)));
 }
+document.getElementById('voiceSel').addEventListener('change', e => {
+  prefs.voices = prefs.voices || {}; prefs.voices[prefs.lang] = e.target.value; store.set(KEY_PREFS, prefs); loadVoices();
+});
+document.getElementById('testRate').addEventListener('click', () => {
+  speak(`This is a speed test at ${prefs.rate.toFixed(2)}.`);
+});
 if (synth) { synth.onvoiceschanged = loadVoices; loadVoices(); }
-
+ 
 function speak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
   if (!synth || !text.trim()) return;
   synth.cancel();
@@ -477,96 +1544,261 @@ function speak(text, { rate = prefs.rate, onBoundary, onEnd } = {}) {
   u.lang = prefs.lang; u.rate = rate; u.pitch = 1;
   const v = pickVoice(prefs.lang); if (v) u.voice = v;
   if (onBoundary) u.onboundary = onBoundary;
-  u.onend = u.onerror = () => onEnd && onEnd();
-  synth.speak(u);
+  u.onend = () => onEnd && onEnd();
+  u.onerror = e => { if (e.error !== 'interrupted' && e.error !== 'canceled') onEnd && onEnd(); };
+  // Chrome às vezes ignora speak() logo após cancel(); um pequeno atraso evita
+  setTimeout(() => synth.speak(u), 30);
 }
 function stopSpeech() { if (synth) synth.cancel(); }
-
+ 
 /* ============ TABS ============ */
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
   document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === t));
   document.querySelectorAll('[role=tabpanel]').forEach(p => p.hidden = p.id !== t.dataset.tab);
-  stopSpeech(); resetReader();
+  resetReader();
 }));
-
+ 
+/* ============ HELPERS DE REDE (usados pelo Leitor e pelo Consultar) ============ */
+async function fetchJSON(url, opts) {
+  const r = await fetch(url, opts);
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+const translate = async (txt, pair = 'en|pt-BR') =>
+  (await fetchJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(txt)}&langpair=${pair}`)).responseData.translatedText;
+const friendlyError = e => {
+  const m = String(e?.message || e);
+  if (/load failed|failed to fetch|networkerror/i.test(m)) return 'sem acesso à internet a partir desta página. Se estiver testando na prévia do Claude, abra o arquivo direto no navegador ou hospede no GitHub Pages: a prévia bloqueia chamadas externas.';
+  if (/^40[13]$/.test(m)) return 'chave inválida ou sem permissão (' + m + ').';
+  if (m === '404') return 'modelo não encontrado (404). Verifique o provedor.';
+  if (m === '429') return 'limite de uso atingido (429). Aguarde um pouco.';
+  return m;
+};
+ 
 /* ============ MÓDULO 1: LEITOR ============ */
+const KEY_TEXTS = 'esh_texts_v1';
 const $text = document.getElementById('text'), $view = document.getElementById('readingView');
 const $listen = document.getElementById('listen'), $stop = document.getElementById('stop');
 const $rate = document.getElementById('rate'), $rateVal = document.getElementById('rateVal');
-
-$rate.value = prefs.rate; $rateVal.textContent = prefs.rate.toFixed(2) + '×';
-$rate.addEventListener('input', () => { prefs.rate = +$rate.value; $rateVal.textContent = prefs.rate.toFixed(2) + '×'; store.set(KEY_PREFS, prefs); });
-
+const R = { txt: '', sents: [], cur: 0, word: -1, playing: false, repeat: 0, gen: 0 };
+ 
+function setRate(v) {
+  prefs.rate = Math.round(v * 100) / 100; $rate.value = prefs.rate;
+  $rateVal.textContent = prefs.rate.toFixed(2) + '×'; store.set(KEY_PREFS, prefs);
+  if (voices.length) loadVoices();
+  document.querySelectorAll('#presets button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.rate === prefs.rate));
+  if (R.playing) playSentence(R.cur, Math.max(R.word, 0));   // aplica na hora
+}
+setRate(prefs.rate);
+$rate.addEventListener('input', () => setRate(+$rate.value));
+document.querySelectorAll('#presets button').forEach(b => b.addEventListener('click', () => setRate(+b.dataset.rate)));
+ 
 document.querySelectorAll('#accent button').forEach(b => {
   b.setAttribute('aria-pressed', b.dataset.lang === prefs.lang);
   b.addEventListener('click', () => {
     prefs.lang = b.dataset.lang; store.set(KEY_PREFS, prefs);
     document.querySelectorAll('#accent button').forEach(x => x.setAttribute('aria-pressed', x === b));
-    loadVoices();
+    loadVoices(); if (R.playing) playSentence(R.cur, Math.max(R.word, 0));
   });
 });
-
-function resetReader() { $view.hidden = true; $text.hidden = false; $listen.disabled = false; $stop.disabled = true; }
-
+ 
+// --- Preparar texto: frases -> palavras (com posições) e montar a visualização ---
+function prepareText(txt) {
+  R.txt = txt; R.sents = []; R.cur = 0; R.word = -1;
+  const re = /[^.!?\n]+(?:[.!?]+["'”’)\]]*|\n+|$)\s*/g; let m;
+  while ((m = re.exec(txt)) !== null) {
+    if (!m[0].trim()) continue;
+    const start = m.index, words = [];
+    const wre = /\S+/g; let w;
+    while ((w = wre.exec(m[0])) !== null) words.push({ start: start + w.index, len: w[0].length, text: w[0] });
+    if (words.length) { const last = words[words.length - 1]; R.sents.push({ start: words[0].start, end: last.start + last.len, text: txt.slice(words[0].start, last.start + last.len), words }); }
+  }
+  $view.innerHTML = R.sents.map((sn, i) => {
+    let out = '', pos = sn.start;
+    sn.words.forEach((wd, j) => { out += escapeHtml(txt.slice(pos, wd.start)) + `<span class="w" data-s="${i}" data-w="${j}">${escapeHtml(wd.text)}</span>`; pos = wd.start + wd.len; });
+    return `<span class="sent" data-s="${i}">${out}</span> `;
+  }).join('');
+}
+function markSentence(i) {
+  $view.querySelectorAll('.sent.active').forEach(e => e.classList.remove('active'));
+  $view.querySelectorAll('.w.now').forEach(e => e.classList.remove('now'));
+  const el = $view.querySelector(`.sent[data-s="${i}"]`); if (el) { el.classList.add('active'); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+  R.cur = i; R.word = -1; savePosition();
+}
+function markWord(i, j) {
+  $view.querySelectorAll('.w.now').forEach(e => e.classList.remove('now'));
+  const el = $view.querySelector(`.w[data-s="${i}"][data-w="${j}"]`); if (el) el.classList.add('now');
+  R.word = j;
+}
+function showReading() { $view.hidden = false; $text.hidden = true; }
+function setPlaying(on) { R.playing = on; $listen.disabled = on; $stop.disabled = !on; }
+ 
+// --- Tocar uma frase (a partir de uma palavra), encadeando as próximas ---
+function playSentence(i, fromWord = 0) {
+  if (!R.sents.length) return;
+  const gen = ++R.gen, sn = R.sents[i];
+  const rel = sn.words[fromWord] ? sn.words[fromWord].start - sn.start : 0;
+  const chunk = R.txt.slice(sn.start + rel, sn.end);
+  markSentence(i); if (fromWord > 0) markWord(i, fromWord);
+  setPlaying(true);
+  speak(chunk, {
+    onBoundary: e => {
+      if (gen !== R.gen || e.name !== 'word') return;
+      const abs = sn.start + rel + e.charIndex;
+      const j = sn.words.findIndex((wd, k) => abs >= wd.start && (k === sn.words.length - 1 || abs < sn.words[k + 1].start));
+      if (j >= 0 && j !== R.word) markWord(i, j);
+    },
+    onEnd: () => {
+      if (gen !== R.gen) return;
+      if (R.repeat > 0) { R.repeat--; setTimeout(() => gen === R.gen && playSentence(i), 400); return; }
+      if (i + 1 < R.sents.length) setTimeout(() => gen === R.gen && playSentence(i + 1), 250);
+      else { setPlaying(false); R.word = -1; $view.querySelectorAll('.w.now').forEach(e => e.classList.remove('now')); }
+    }
+  });
+}
+function stopReading() { R.gen++; R.repeat = 0; stopSpeech(); setPlaying(false); document.getElementById('repeatSent').setAttribute('aria-pressed', 'false'); }
+function resetReader() { stopReading(); }
+ 
 $listen.addEventListener('click', () => {
   const txt = $text.value.trim(); if (!txt) { $text.focus(); return; }
-  // Destaque palavra a palavra (quando o navegador dispara onboundary)
-  const words = txt.split(/(\s+)/);
-  $view.innerHTML = words.map(w => /\s+/.test(w) ? w : `<span>${escapeHtml(w)}</span>`).join('');
-  const spans = [...$view.querySelectorAll('span')];
-  const offsets = []; let pos = 0;
-  words.forEach(w => { if (!/\s+/.test(w)) offsets.push(pos); pos += w.length; });
-  $view.hidden = false; $text.hidden = true; $listen.disabled = true; $stop.disabled = false;
-  let current = -1;
-  speak(txt, {
-    onBoundary: e => {
-      if (e.name !== 'word') return;
-      let i = offsets.findIndex((o, k) => e.charIndex >= o && (k === offsets.length - 1 || e.charIndex < offsets[k+1]));
-      if (i < 0 || i === current) return;
-      if (current >= 0) spans[current].outerHTML = `<span>${spans[current].textContent}</span>`;
-      spans.length = 0; spans.push(...$view.querySelectorAll('span, mark'));
-      spans[i].outerHTML = `<mark>${spans[i].textContent}</mark>`;
-      spans.length = 0; spans.push(...$view.querySelectorAll('span, mark'));
-      current = i;
-    },
-    onEnd: resetReader
-  });
+  if (txt !== R.txt) { prepareText(txt); R.cur = restorePosition(txt); }
+  showReading(); saveText(txt); playSentence(R.cur);
 });
-$stop.addEventListener('click', () => { stopSpeech(); resetReader(); });
-document.getElementById('clear').addEventListener('click', () => { stopSpeech(); $text.value = ''; resetReader(); $text.focus(); });
+$stop.addEventListener('click', stopReading);
+document.getElementById('prevSent').addEventListener('click', () => { if (!R.sents.length) return; playSentence(Math.max(0, R.cur - 1)); });
+document.getElementById('nextSent').addEventListener('click', () => { if (!R.sents.length) return; playSentence(Math.min(R.sents.length - 1, R.cur + 1)); });
+document.getElementById('repeatSent').addEventListener('click', e => {
+  if (!R.sents.length) { $listen.click(); return; }
+  R.repeat = 2; e.currentTarget.setAttribute('aria-pressed', 'true'); playSentence(R.cur);
+});
+document.getElementById('edit').addEventListener('click', () => { stopReading(); $view.hidden = true; $text.hidden = false; wordCard.hidden = true; shadowOut.hidden = true; $text.focus(); });
+ 
+// --- Clique na palavra: ouvir / traduzir / salvar ---
+const wordCard = document.getElementById('wordCard');
+let wcState = null;
+$view.addEventListener('click', async e => {
+  const el = e.target.closest('.w'); if (!el) return;
+  stopReading();
+  const i = +el.dataset.s, j = +el.dataset.w, sn = R.sents[i];
+  markSentence(i); markWord(i, j);
+  const word = sn.words[j].text.replace(/^[^A-Za-z']+|[^A-Za-z']+$/g, '');
+  wcState = { word, sentence: sn.text, trans: '' };
+  wcWord.textContent = word; wcTrans.textContent = 'traduzindo…'; wcAdd.textContent = '+ Flashcard'; wcAdd.disabled = false;
+  wordCard.hidden = false; wordCard.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  speak(word);
+  try { wcState.trans = await translate(word); wcTrans.textContent = wcState.trans; }
+  catch (err) { wcTrans.textContent = 'tradução indisponível: ' + friendlyError(err); }
+});
+wordCard.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => {
+  const saved = prefs.lang; prefs.lang = b.dataset.say; speak(wcState.word); prefs.lang = saved;
+}));
+document.getElementById('wcClose').addEventListener('click', () => wordCard.hidden = true);
+document.getElementById('wcAdd').addEventListener('click', () => {
+  const c = { level: 'Meu', word: wcState.word, sentence: wcState.sentence, t_word: wcState.trans, t_sentence: '' };
+  customWords.push(c); store.set(KEY_CUSTOM, customWords); deck.push(c); buildQueue(); renderStats();
+  wcAdd.textContent = 'Adicionado ✓'; wcAdd.disabled = true;
+});
+document.getElementById('wcLookup').addEventListener('click', () => {
+  document.querySelector('.tab[data-tab="lookup"]').click(); q.value = wcState.word; lookup();
+});
+ 
+// --- Retomar de onde parou + últimos textos ---
+function textKey(txt) { let h = 0; for (const ch of txt) h = (h * 31 + ch.charCodeAt(0)) | 0; return String(h); }
+function loadTexts() { return store.get(KEY_TEXTS, []); }
+function savePosition() { if (!R.txt) return; const list = loadTexts(); const t = list.find(x => x.key === textKey(R.txt)); if (t) { t.pos = R.cur; store.set(KEY_TEXTS, list); } }
+function restorePosition(txt) { const t = loadTexts().find(x => x.key === textKey(txt)); return t && t.pos < R.sents.length ? t.pos : 0; }
+function saveText(txt) {
+  let list = loadTexts().filter(x => x.key !== textKey(txt));
+  list.unshift({ key: textKey(txt), txt, pos: R.cur, ts: Date.now(), title: txt.slice(0, 60).replace(/\s+/g, ' ') + (txt.length > 60 ? '…' : '') });
+  list = list.slice(0, 6); store.set(KEY_TEXTS, list); renderRecent();
+}
+function renderRecent() {
+  const list = loadTexts();
+  recentList.innerHTML = list.length ? list.map((t, i) =>
+    `<button data-i="${i}">${escapeHtml(t.title)}<small>${new Date(t.ts).toLocaleDateString('pt-BR')} · frase ${t.pos + 1}</small></button>`).join('')
+    : '<p class="hint">Os textos que você ouvir aparecem aqui.</p>';
+  recentList.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    const t = loadTexts()[+b.dataset.i]; $text.value = t.txt; prepareText(t.txt); R.cur = t.pos; showReading(); markSentence(t.pos); document.getElementById('recent').open = false;
+  }));
+}
+renderRecent();
+ 
+// --- Shadowing: ouvir a frase e repetir no microfone ---
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const $shadow = document.getElementById('shadow'), $shadowOut = document.getElementById('shadowOut');
+if (!SR) { $shadow.disabled = true; $shadow.title = 'Reconhecimento de voz não disponível neste navegador (use Chrome ou Safari).'; }
+const normW = w => w.toLowerCase().replace(/[^a-z0-9']/g, '');
+$shadow.addEventListener('click', () => {
+  if (!R.sents.length) { $listen.click(); return; }
+  stopReading();
+  const sn = R.sents[R.cur]; markSentence(R.cur);
+  $shadowOut.hidden = false; $shadowOut.innerHTML = `<p><strong>Sua vez:</strong> leia em voz alta a frase destacada.</p><p class="pt">🎤 ouvindo…</p>`;
+  const rec = new SR(); rec.lang = prefs.lang; rec.interimResults = false; rec.maxAlternatives = 1;
+  rec.onresult = ev => {
+    const said = ev.results[0][0].transcript, saidWords = said.split(/\s+/).map(normW);
+    const expected = sn.words.map(w => normW(w.text)).filter(Boolean);
+    const pool = [...saidWords]; let hits = 0;
+    const marked = expected.map(w => { const k = pool.indexOf(w); if (k >= 0) { pool.splice(k, 1); hits++; return `<span class="shadow-ok">${escapeHtml(w)}</span>`; } return `<span class="shadow-bad">${escapeHtml(w)}</span>`; });
+    const pct = Math.round(hits / expected.length * 100);
+    $shadowOut.innerHTML = `<p><strong>${pct}%</strong> das palavras reconhecidas</p><p style="font-family:var(--serif);font-size:1.1rem">${marked.join(' ')}</p><p class="pt">Você disse: “${escapeHtml(said)}”</p><p class="pt">Palavras em vermelho não foram reconhecidas: ouça a frase de novo (🔁) e tente outra vez.</p>`;
+  };
+  rec.onerror = ev => { $shadowOut.innerHTML = `<p class="warn">Não consegui ouvir (${escapeHtml(ev.error)}). Verifique a permissão do microfone e tente de novo.</p>`; };
+  rec.onend = () => { if (/ouvindo/.test($shadowOut.textContent)) $shadowOut.innerHTML = '<p class="pt">Nada foi captado. Tente falar mais perto do microfone.</p>'; };
+  try { rec.start(); } catch (err) { $shadowOut.innerHTML = `<p class="warn">${escapeHtml(friendlyError(err))}</p>`; }
+});
+ 
 function escapeHtml(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
+ 
 /* ============ MÓDULO 2: FLASHCARDS ============ */
 const KEY_CUSTOM = 'esh_custom_v1', KEY_AI = 'esh_ai_v1';
 let customWords = store.get(KEY_CUSTOM, []);
 let deck = normalizeDeck(store.get(KEY_DECK, null) || BASE_DECK).concat(customWords);
 let stats = store.get(KEY_STATS, { total: 0, known: 0, almost: 0, unknown: 0, words: {} });
 let queue = [], idx = 0, card = null;
-
+ 
 function normalizeDeck(d) {
   return d.map(x => Array.isArray(x)
     ? { level: x[0], word: x[1], sentence: x[2], t_word: x[3], t_sentence: x[4] }
     : x).filter(x => x && x.word && x.sentence);
 }
 // Repetição espaçada simples: "não sabia" reaparece cedo, "já sabia" (x2) vira dominada e sai do ciclo.
+function levelDeck() { return prefs.level && prefs.level !== 'all' ? deck.filter(c => c.level === prefs.level) : deck; }
 function buildQueue() {
   const score = w => (stats.words[w] || { score: 0 }).score;
-  const active = deck.filter(c => score(c.word) < 2);
-  const pool = active.length ? active : deck;
+  const pool0 = levelDeck();
+  const active = pool0.filter(c => score(c.word) < 2);
+  const pool = active.length ? active : pool0;
   queue = [...pool].sort((a, b) => score(a.word) - score(b.word) || Math.random() - 0.5);
   idx = 0;
 }
+function todayKey() { return new Date().toISOString().slice(0, 10); }
 function renderStats() {
-  const mastered = deck.filter(c => (stats.words[c.word] || {}).score >= 2).length;
+  const d = levelDeck();
+  const mastered = d.filter(c => (stats.words[c.word] || {}).score >= 2).length;
+  const fresh = d.filter(c => !stats.words[c.word]).length;
   sTotal.textContent = stats.total; sKnown.textContent = stats.known;
   sAlmost.textContent = stats.almost; sUnknown.textContent = stats.unknown;
-  sMastered.textContent = mastered; sDeck.textContent = deck.length;
-  bar.style.width = deck.length ? (mastered / deck.length * 100) + '%' : '0';
+  sMastered.textContent = mastered; sDeck.textContent = d.length; sNew.textContent = fresh;
+  bar.style.width = d.length ? (mastered / d.length * 100) + '%' : '0';
+  const today = stats.daily && stats.daily.date === todayKey() ? stats.daily.count : 0;
+  sToday.textContent = today; goal.value = prefs.goal || 20;
+  sToday.style.color = today >= (prefs.goal || 20) ? 'var(--teal)' : '';
 }
+document.querySelectorAll('#levelSeg button').forEach(b => {
+  b.setAttribute('aria-pressed', (prefs.level || 'all') === b.dataset.level);
+  b.addEventListener('click', () => {
+    prefs.level = b.dataset.level; store.set(KEY_PREFS, prefs);
+    document.querySelectorAll('#levelSeg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    buildQueue(); showCard();
+  });
+});
+goal.addEventListener('change', () => { prefs.goal = Math.max(5, +goal.value || 20); store.set(KEY_PREFS, prefs); renderStats(); });
 function showCard() {
   if (!queue.length) buildQueue();
   if (idx >= queue.length) buildQueue();
   card = queue[idx];
+  if (!card) { cLevel.textContent = '—'; cWord.textContent = 'Nenhuma palavra'; cSent.textContent = 'Adicione palavras pelo Leitor ou pela aba Consultar.'; meaning.hidden = true; gradeRow.hidden = true; revealRow.hidden = true; renderStats(); return; }
+  revealRow.hidden = false;
   cLevel.textContent = card.level || '—';
   cWord.textContent = card.word;
   cSent.textContent = card.sentence;
@@ -583,13 +1815,15 @@ document.querySelectorAll('[data-grade]').forEach(b => b.addEventListener('click
   w.seen++;
   w.score = g === 'known' ? Math.min(w.score + 1, 2) : g === 'almost' ? Math.max(w.score, 0) : -1;
   stats.words[card.word] = w; stats[g]++; stats.total++;
+  if (!stats.daily || stats.daily.date !== todayKey()) stats.daily = { date: todayKey(), count: 0 };
+  stats.daily.count++;
   store.set(KEY_STATS, stats);
   idx++; stopSpeech(); showCard();
 }));
-document.getElementById('cPlayWord').addEventListener('click', () => speak(card.word, { rate: Math.min(prefs.rate, 0.9) }));
+document.getElementById('cPlayWord').addEventListener('click', () => speak(card.word));
 document.getElementById('cPlaySent').addEventListener('click', () => speak(card.sentence));
 document.getElementById('shuffle').addEventListener('click', () => { buildQueue(); showCard(); });
-
+ 
 document.getElementById('importBtn').addEventListener('click', () => importFile.click());
 importFile.addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
@@ -609,15 +1843,15 @@ document.getElementById('resetStats').addEventListener('click', () => {
   stats = { total: 0, known: 0, almost: 0, unknown: 0, words: {} }; store.set(KEY_STATS, stats);
   buildQueue(); showCard();
 });
-
+ 
 // Atalhos de teclado: Espaço revela, 1/2/3 avaliam
 document.addEventListener('keydown', e => {
   if (document.getElementById('cards').hidden || e.target.tagName === 'TEXTAREA') return;
   if (e.code === 'Space' && !revealRow.hidden) { e.preventDefault(); reveal.click(); }
   if (!gradeRow.hidden && ['1','2','3'].includes(e.key)) gradeRow.children[+e.key - 1].click();
 });
-
-
+ 
+ 
 /* ============ MÓDULO 3: CONSULTAR PALAVRA ============ */
 // Tabela embutida de diferenças 🇺🇸 x 🇬🇧 (termo US, termo UK, português, observação)
 const REGIONAL = [
@@ -700,33 +1934,18 @@ document.getElementById('aiSave').addEventListener('click', () => {
   aiCfg.provider = aiProvider.value; aiCfg.key = aiKey.value.trim(); store.set(KEY_AI, aiCfg);
   aiSave.textContent = 'Salvo'; setTimeout(() => aiSave.textContent = 'Salvar', 1500);
 });
-
+ 
 document.getElementById('lookupBtn').addEventListener('click', lookup);
 $q.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
-
+ 
 const norm = s => s.toLowerCase().replace(/[^a-z' ]/g, ' ').replace(/\s+/g, ' ').trim();
 function findRegional(term) {
   const t = norm(term);
   return REGIONAL.filter(([us, uk]) => [us, uk].some(side => side.split('/').map(norm).includes(t)));
 }
-async function fetchJSON(url, opts) {
-  const r = await fetch(url, opts);
-  if (!r.ok) throw new Error(r.status);
-  return r.json();
-}
-const translate = async (txt, pair = 'en|pt-BR') =>
-  (await fetchJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(txt)}&langpair=${pair}`)).responseData.translatedText;
 const PT_WORDS = /\b(de|da|do|das|dos|um|uma|com|sem|para|por|que|não|nao|sim|casa|carro|banheiro|comida|água|agua|público|publico|onde|como|obrigado|bom|boa|dia|noite|amigo|trabalho|dinheiro|rua|cidade|loja)\b/i;
 const looksPortuguese = t => /[ãõçáéíóúâêôà]/i.test(t) || PT_WORDS.test(t);
-const friendlyError = e => {
-  const m = String(e?.message || e);
-  if (/load failed|failed to fetch|networkerror/i.test(m)) return 'sem acesso à internet a partir desta página. Se estiver testando na prévia do Claude, abra o arquivo direto no navegador ou hospede no GitHub Pages: a prévia bloqueia chamadas externas.';
-  if (/^40[13]$/.test(m)) return 'chave inválida ou sem permissão (' + m + ').';
-  if (m === '404') return 'modelo não encontrado (404). Verifique o provedor.';
-  if (m === '429') return 'limite de uso atingido (429). Aguarde um pouco.';
-  return m;
-};
-
+ 
 // Dicionário: tenta a expressão inteira; se não existir, tenta a palavra principal (a última)
 async function lookupDict(term) {
   const url = w => `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(w)}`;
@@ -743,7 +1962,7 @@ async function lookup() {
   const input = $q.value.trim(); if (!input) { $q.focus(); return; }
   stopSpeech();
   $out.innerHTML = `<div class="block"><p class="pt">Buscando "${escapeHtml(input)}"…</p></div>`;
-
+ 
   // Se digitou em português, primeiro descobre o termo em inglês
   let term = input, fromPt = false;
   if (looksPortuguese(input)) {
@@ -751,7 +1970,7 @@ async function lookup() {
     if (reg.length) { term = reg[0][0].split('/')[0].trim(); fromPt = true; }
     else { try { term = (await translate(input, 'pt-BR|en')).trim(); fromPt = term.toLowerCase() !== input.toLowerCase(); } catch {} }
   }
-
+ 
   const [dict, trans, ai] = await Promise.allSettled([
     lookupDict(term),
     fromPt ? Promise.resolve(input) : translate(term),
@@ -762,7 +1981,7 @@ async function lookup() {
   const entry = dict.status === 'fulfilled' ? dict.value[0] : null;
   const regional = regionalHits;
   const html = [];
-
+ 
   // Cabeçalho
   const ipa = entry?.phonetic || entry?.phonetics?.find(p => p.text)?.text || '';
   html.push(`<div class="block"><div class="headword">
@@ -775,7 +1994,7 @@ async function lookup() {
   <p style="margin-top:12px"><strong>Tradução:</strong> ${trans.status === 'fulfilled' ? escapeHtml(trans.value) : `<span class="warn">indisponível: ${escapeHtml(friendlyError(trans.reason))}</span>`}</p>
   ${ai.status === 'fulfilled' && ai.value.pronunciation ? `<p class="pt"><strong>Pronúncia:</strong> ${escapeHtml(ai.value.pronunciation)}</p>` : ''}
   </div>`);
-
+ 
   // IA (se configurada)
   let aiData = null;
   if (ai.status === 'fulfilled') {
@@ -788,7 +2007,7 @@ async function lookup() {
   } else if (aiCfg.key) {
     html.push(`<div class="block"><p class="warn">A IA não respondeu: ${escapeHtml(friendlyError(ai.reason))}</p></div>`);
   }
-
+ 
   // 🇺🇸 x 🇬🇧
   if (aiData?.us_vs_uk) {
     const r = aiData.us_vs_uk;
@@ -803,7 +2022,7 @@ async function lookup() {
   } else {
     html.push(`<div class="block"><h3>🇺🇸 Estados Unidos × 🇬🇧 Reino Unido</h3><p class="pt">Nenhuma diferença registrada na tabela local. Configure a IA opcional acima para checar qualquer palavra.</p></div>`);
   }
-
+ 
   // Dicionário (definições em inglês + exemplos traduzidos)
   if (entry) {
     const examples = [];
@@ -826,15 +2045,15 @@ async function lookup() {
       ? `Dicionário indisponível: ${escapeHtml(friendlyError(dict.reason))}`
       : `O dicionário não encontrou "${escapeHtml(term)}". Expressões compostas nem sempre existem lá; tente a palavra principal.`}</p></div>`);
   }
-
+ 
   $out.innerHTML = html.join('');
-
+ 
   // Áudio
   $out.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => {
-    const saved = prefs.lang; prefs.lang = b.dataset.say; speak(term, { rate: Math.min(prefs.rate, 0.9) }); prefs.lang = saved;
+    const saved = prefs.lang; prefs.lang = b.dataset.say; speak(term); prefs.lang = saved;
   }));
   $out.querySelectorAll('[data-say-text]').forEach(b => b.addEventListener('click', () => speak(b.dataset.sayText)));
-
+ 
   // Salvar como flashcard
   document.getElementById('addCard').addEventListener('click', () => {
     const sentence = aiData?.examples?.[0]?.en || entry?.meanings?.flatMap(m => m.definitions).find(d => d.example)?.example || `I learned the word "${term}" today.`;
@@ -846,11 +2065,11 @@ async function lookup() {
     addCard.textContent = 'Adicionado ✓'; addCard.disabled = true;
   });
 }
-
+ 
 // ---- IA opcional (chave do próprio usuário, guardada só no navegador) ----
 const AI_PROMPT = term => `You are an English teacher for a Brazilian Portuguese speaker. The learner typed: "${term}". It may be in English or in Portuguese. If it is Portuguese, first find the most natural English equivalent. Reply ONLY with JSON (no markdown):
 {"english_term":"the English word/expression (US form)","pronunciation":"como pronunciar, escrito de forma simples para um brasileiro, ex.: 'RÉST-rum' + IPA","meaning_pt":"explicação curta em português do significado e quando usar","examples":[{"en":"frase natural 1","pt":"tradução"},{"en":"frase natural 2","pt":"tradução"},{"en":"frase natural 3","pt":"tradução"}],"us_vs_uk":{"same":true|false,"us":"termo/uso nos EUA","us_note":"nota curta","uk":"termo/uso no Reino Unido","uk_note":"nota curta","note":"diferença de significado, conotação ou grafia, em português"},"tip":"dica curta em português (falsos cognatos, pegadinhas)"}`;
-
+ 
 async function askAI(term) {
   const { provider, key } = aiCfg;
   let text;
@@ -883,8 +2102,9 @@ async function askAI(term) {
   }
   return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
-
+ 
 buildQueue(); showCard();
 </script>
 </body>
 </html>
+ 
